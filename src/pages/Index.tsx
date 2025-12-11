@@ -7,6 +7,9 @@ import { OptionChain } from '@/components/dashboard/OptionChain';
 import { Positions } from '@/components/dashboard/Positions';
 import { TradePanel } from '@/components/dashboard/TradePanel';
 import { MLSignals } from '@/components/dashboard/MLSignals';
+import { BacktestingPanel } from '@/components/dashboard/BacktestingPanel';
+import { MLTrainingPanel } from '@/components/dashboard/MLTrainingPanel';
+import { TradingViewChart, TradingViewAnalysis } from '@/components/dashboard/TradingViewChart';
 import { StockQuote } from '@/lib/mockData';
 
 const Index: React.FC = () => {
@@ -63,6 +66,19 @@ const Index: React.FC = () => {
             </>
           )}
 
+          {activeTab === 'charts' && (
+            <div className="space-y-6">
+              <TradingViewChart 
+                symbol={`NSE:${selectedStock?.symbol || 'NIFTY'}`}
+                height={600}
+              />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <TradingViewAnalysis symbol={`NSE:${selectedStock?.symbol || 'NIFTY'}`} />
+                <Watchlist onSelectStock={handleSelectStock} />
+              </div>
+            </div>
+          )}
+
           {activeTab === 'options' && (
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
               <div className="xl:col-span-2">
@@ -84,29 +100,25 @@ const Index: React.FC = () => {
           {activeTab === 'positions' && (
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               <Positions />
-              <div className="space-y-6">
-                <PortfolioOverview />
-              </div>
+              <PortfolioOverview />
             </div>
           )}
 
-          {activeTab === 'ml' && (
-            <MLSignals />
-          )}
+          {activeTab === 'backtest' && <BacktestingPanel />}
 
-          {activeTab === 'portfolio' && (
-            <PortfolioOverview />
-          )}
+          {activeTab === 'ml' && <MLTrainingPanel />}
 
-          {(activeTab === 'charts' || activeTab === 'history') && (
+          {activeTab === 'portfolio' && <PortfolioOverview />}
+
+          {activeTab === 'history' && (
             <div className="flex items-center justify-center h-[60vh] glass-card rounded-2xl">
               <div className="text-center space-y-4">
                 <div className="w-16 h-16 mx-auto rounded-2xl bg-muted flex items-center justify-center">
                   <span className="text-2xl">📊</span>
                 </div>
-                <h3 className="text-xl font-semibold">Coming Soon</h3>
+                <h3 className="text-xl font-semibold">Trade History</h3>
                 <p className="text-muted-foreground max-w-md">
-                  Advanced charting with TradingView integration and full trade history with analytics are on the roadmap.
+                  Complete trade history with analytics coming soon.
                 </p>
               </div>
             </div>
