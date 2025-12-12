@@ -1,6 +1,5 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { useTiltEffect } from '@/hooks/useTiltEffect';
 
 interface GlassButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'default' | 'primary' | 'success' | 'destructive';
@@ -11,8 +10,8 @@ interface GlassButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
 const variantClasses = {
   default: 'glass-button',
   primary: 'glass-button border-primary/30 hover:border-primary/50 hover:shadow-[0_0_30px_hsl(var(--primary)/0.3)]',
-  success: 'glass-button border-success/30 hover:border-success/50 hover:shadow-[0_0_30px_hsl(var(--success)/0.3)]',
-  destructive: 'glass-button border-destructive/30 hover:border-destructive/50 hover:shadow-[0_0_30px_hsl(var(--destructive)/0.3)]',
+  success: 'glass-button border-success/30 hover:border-success/50 hover:shadow-[0_0_30px_hsl(var(--success)/0.3)] bg-success/10',
+  destructive: 'glass-button border-destructive/30 hover:border-destructive/50 hover:shadow-[0_0_30px_hsl(var(--destructive)/0.3)] bg-destructive/10',
 };
 
 const sizeClasses = {
@@ -29,9 +28,7 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
   withTilt = false,
   ...props
 }) => {
-  const { ref, style, handlers } = useTiltEffect(5);
-
-  const buttonContent = (
+  return (
     <button
       className={cn(
         variantClasses[variant],
@@ -44,14 +41,4 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
       {children}
     </button>
   );
-
-  if (withTilt) {
-    return (
-      <div ref={ref} style={style} {...handlers} className="inline-block">
-        {buttonContent}
-      </div>
-    );
-  }
-
-  return buttonContent;
 };

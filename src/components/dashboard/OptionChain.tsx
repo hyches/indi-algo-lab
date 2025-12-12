@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { TiltCard } from '@/components/ui/TiltCard';
 import { optionChainData, OptionData } from '@/lib/mockData';
 import { cn } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react';
@@ -137,7 +136,7 @@ export const OptionChain: React.FC<OptionChainProps> = ({
         </div>
       </div>
 
-      <TiltCard className="p-0 overflow-hidden" intensity={3}>
+      <div className="glass-card p-0 overflow-hidden">
         {/* Header */}
         <div className="grid grid-cols-9 gap-2 py-3 px-3 text-xs font-medium text-muted-foreground border-b border-border/50 bg-muted/30">
           <div>OI</div>
@@ -179,7 +178,7 @@ export const OptionChain: React.FC<OptionChainProps> = ({
             </p>
           </div>
         </div>
-      </TiltCard>
+      </div>
     </div>
   );
 };

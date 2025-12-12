@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { TiltCard } from '@/components/ui/TiltCard';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { cn } from '@/lib/utils';
 import { 
@@ -153,9 +152,9 @@ export const MLTrainingPanel: React.FC = () => {
       
       {/* Model Status */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <TiltCard className="p-4" intensity={5}>
+        <div className="glass-card p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-secondary/50">
+            <div className="p-2 rounded-lg bg-secondary">
               <Database size={18} className="text-muted-foreground" />
             </div>
             <div>
@@ -163,11 +162,11 @@ export const MLTrainingPanel: React.FC = () => {
               <p className="text-sm text-muted-foreground">Stored Examples</p>
             </div>
           </div>
-        </TiltCard>
+        </div>
         
-        <TiltCard className="p-4" intensity={5}>
+        <div className="glass-card p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-secondary/50">
+            <div className="p-2 rounded-lg bg-secondary">
               <Cpu size={18} className="text-muted-foreground" />
             </div>
             <div>
@@ -175,11 +174,11 @@ export const MLTrainingPanel: React.FC = () => {
               <p className="text-sm text-muted-foreground">Input Features</p>
             </div>
           </div>
-        </TiltCard>
+        </div>
         
-        <TiltCard className="p-4" intensity={5}>
+        <div className="glass-card p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-secondary/50">
+            <div className="p-2 rounded-lg bg-secondary">
               <Activity size={18} className="text-muted-foreground" />
             </div>
             <div>
@@ -189,11 +188,11 @@ export const MLTrainingPanel: React.FC = () => {
               <p className="text-sm text-muted-foreground">Model Accuracy</p>
             </div>
           </div>
-        </TiltCard>
+        </div>
       </div>
       
       {/* Training Section */}
-      <TiltCard className="p-6" intensity={3}>
+      <div className="glass-card p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-medium">Model Training</h3>
           <GlassButton 
@@ -289,13 +288,13 @@ export const MLTrainingPanel: React.FC = () => {
             </div>
           </div>
         )}
-      </TiltCard>
+      </div>
       
       {/* Live Prediction */}
       {modelReady && prediction && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Prediction Result */}
-          <TiltCard className="p-6" intensity={5}>
+          <div className="glass-card p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium">Live Prediction</h3>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -368,10 +367,10 @@ export const MLTrainingPanel: React.FC = () => {
                 />
               </div>
             </div>
-          </TiltCard>
+          </div>
           
           {/* Feature Importance */}
-          <TiltCard className="p-6" intensity={5}>
+          <div className="glass-card p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium">Feature Importance</h3>
               <button className="text-muted-foreground hover:text-foreground">
@@ -417,25 +416,25 @@ export const MLTrainingPanel: React.FC = () => {
                 </div>
               ))}
             </div>
-          </TiltCard>
+          </div>
         </div>
       )}
       
       {/* Feature List */}
-      <TiltCard className="p-6" intensity={3}>
+      <div className="glass-card p-6">
         <h3 className="font-medium mb-4">Extracted Features ({FEATURE_NAMES.length} total)</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 text-xs">
-          {FEATURE_NAMES.map((name, i) => (
+          {FEATURE_NAMES.map((name) => (
             <div 
               key={name}
-              className="px-2 py-1.5 rounded-lg bg-secondary/30 text-muted-foreground truncate"
+              className="px-2 py-1.5 rounded-lg bg-secondary text-muted-foreground truncate"
               title={name}
             >
               {name}
             </div>
           ))}
         </div>
-      </TiltCard>
+      </div>
     </div>
   );
 };

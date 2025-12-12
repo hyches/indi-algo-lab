@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { TiltCard } from '@/components/ui/TiltCard';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { useTrading } from '@/contexts/TradingContext';
 import { cn } from '@/lib/utils';
@@ -90,7 +89,7 @@ export const TradePanel: React.FC<TradePanelProps> = ({
         </div>
       </div>
 
-      <TiltCard className="p-5 space-y-5" intensity={4}>
+      <div className="glass-card p-5 space-y-5">
         {/* Live Price Display */}
         {quote && (
           <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30">
@@ -259,11 +258,11 @@ export const TradePanel: React.FC<TradePanelProps> = ({
         </GlassButton>
 
         {!canAfford && (
-          <p className="text-xs text-rose-400 text-center">
+          <p className="text-xs text-destructive text-center">
             Insufficient margin. Reduce quantity or close existing positions.
           </p>
         )}
-      </TiltCard>
+      </div>
     </div>
   );
 };

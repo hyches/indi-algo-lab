@@ -1,5 +1,4 @@
 import React from 'react';
-import { TiltCard } from '@/components/ui/TiltCard';
 import { useTrading, Position } from '@/contexts/TradingContext';
 import { cn } from '@/lib/utils';
 import { X, TrendingUp, TrendingDown, Loader2 } from 'lucide-react';
@@ -25,7 +24,7 @@ const PositionRow: React.FC<PositionRowProps> = ({ position, onClose, isClosing 
   const isShort = position.qty < 0;
 
   return (
-    <TiltCard className="p-4" intensity={4}>
+    <div className="glass-card p-4">
       <div className="flex items-start justify-between">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
@@ -98,7 +97,7 @@ const PositionRow: React.FC<PositionRowProps> = ({ position, onClose, isClosing 
           <p className="font-mono text-foreground">{formatCurrency(Math.abs(position.qty) * position.ltp)}</p>
         </div>
       </div>
-    </TiltCard>
+    </div>
   );
 };
 
@@ -155,7 +154,7 @@ export const Positions: React.FC<PositionsProps> = () => {
       </div>
 
       {positions.length === 0 ? (
-        <TiltCard className="p-8 text-center" intensity={3}>
+        <div className="glass-card p-8 text-center">
           <div className="w-16 h-16 mx-auto rounded-2xl bg-muted flex items-center justify-center mb-4">
             <span className="text-2xl">📈</span>
           </div>
@@ -163,7 +162,7 @@ export const Positions: React.FC<PositionsProps> = () => {
           <p className="text-muted-foreground text-sm">
             Place a trade to open a position
           </p>
-        </TiltCard>
+        </div>
       ) : (
         <>
           <div className="space-y-3">

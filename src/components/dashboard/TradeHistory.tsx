@@ -1,5 +1,4 @@
 import React from 'react';
-import { TiltCard } from '@/components/ui/TiltCard';
 import { useTrading, Trade } from '@/contexts/TradingContext';
 import { cn } from '@/lib/utils';
 import { ArrowUpCircle, ArrowDownCircle, Clock, CheckCircle2, XCircle } from 'lucide-react';
@@ -31,7 +30,7 @@ const TradeRow: React.FC<TradeRowProps> = ({ trade }) => {
   };
 
   return (
-    <TiltCard className="p-4" intensity={3}>
+    <div className="glass-card p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className={cn(
@@ -91,7 +90,7 @@ const TradeRow: React.FC<TradeRowProps> = ({ trade }) => {
           )}
         </div>
       </div>
-    </TiltCard>
+    </div>
   );
 };
 
@@ -107,37 +106,37 @@ export const TradeHistory: React.FC = () => {
     <div className="space-y-6">
       {/* Summary Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <TiltCard className="p-4" intensity={4}>
+        <div className="glass-card p-4">
           <p className="text-xs text-muted-foreground">Total Trades</p>
           <p className="text-2xl font-bold font-mono">{portfolio.totalTrades}</p>
-        </TiltCard>
-        <TiltCard className="p-4" intensity={4}>
+        </div>
+        <div className="glass-card p-4">
           <p className="text-xs text-muted-foreground">Win Rate</p>
           <p className={cn(
             'text-2xl font-bold font-mono',
-            portfolio.winRate >= 0.5 ? 'text-emerald-400' : 'text-rose-400'
+            portfolio.winRate >= 0.5 ? 'text-success' : 'text-destructive'
           )}>
             {(portfolio.winRate * 100).toFixed(1)}%
           </p>
-        </TiltCard>
-        <TiltCard className="p-4" intensity={4}>
+        </div>
+        <div className="glass-card p-4">
           <p className="text-xs text-muted-foreground">Realized P&L</p>
           <p className={cn(
             'text-2xl font-bold font-mono',
-            portfolio.realizedPnL >= 0 ? 'text-emerald-400' : 'text-rose-400'
+            portfolio.realizedPnL >= 0 ? 'text-success' : 'text-destructive'
           )}>
             {formatCurrency(portfolio.realizedPnL)}
           </p>
-        </TiltCard>
-        <TiltCard className="p-4" intensity={4}>
+        </div>
+        <div className="glass-card p-4">
           <p className="text-xs text-muted-foreground">Avg Return/Trade</p>
           <p className={cn(
             'text-2xl font-bold font-mono',
-            portfolio.avgReturn >= 0 ? 'text-emerald-400' : 'text-rose-400'
+            portfolio.avgReturn >= 0 ? 'text-success' : 'text-destructive'
           )}>
             {formatCurrency(portfolio.avgReturn)}
           </p>
-        </TiltCard>
+        </div>
       </div>
 
       {/* Trade History */}
@@ -152,7 +151,7 @@ export const TradeHistory: React.FC = () => {
         </div>
 
         {trades.length === 0 ? (
-          <TiltCard className="p-8 text-center" intensity={3}>
+          <div className="glass-card p-8 text-center">
             <div className="w-16 h-16 mx-auto rounded-2xl bg-muted flex items-center justify-center mb-4">
               <Clock size={32} className="text-muted-foreground" />
             </div>
@@ -160,7 +159,7 @@ export const TradeHistory: React.FC = () => {
             <p className="text-muted-foreground text-sm">
               Place your first trade to see it here
             </p>
-          </TiltCard>
+          </div>
         ) : (
           <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
             {trades.map(trade => (

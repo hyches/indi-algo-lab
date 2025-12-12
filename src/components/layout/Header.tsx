@@ -1,10 +1,11 @@
 import React from 'react';
-import { TiltCard } from '@/components/ui/TiltCard';
-import { Search, Bell, User, Clock } from 'lucide-react';
+import { Search, Bell, User, Clock, Moon, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/components/ThemeProvider';
 
 export const Header: React.FC = () => {
   const [currentTime, setCurrentTime] = React.useState(new Date());
+  const { theme, toggleTheme } = useTheme();
 
   React.useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -67,6 +68,14 @@ export const Header: React.FC = () => {
 
       {/* Right - Actions */}
       <div className="flex items-center gap-3">
+        <button 
+          onClick={toggleTheme}
+          className="p-2 rounded-xl hover:bg-accent/50 transition-colors text-muted-foreground hover:text-foreground"
+          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+        
         <button className="relative p-2 rounded-xl hover:bg-accent/50 transition-colors text-muted-foreground hover:text-foreground">
           <Bell size={20} />
           <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />

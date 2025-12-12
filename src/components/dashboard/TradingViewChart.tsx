@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, memo } from 'react';
-import { TiltCard } from '@/components/ui/TiltCard';
+import { useTheme } from '@/components/ThemeProvider';
 
 interface TradingViewChartProps {
   symbol?: string;
@@ -12,11 +12,13 @@ interface TradingViewChartProps {
 export const TradingViewChart: React.FC<TradingViewChartProps> = memo(({
   symbol = 'NSE:NIFTY',
   interval = 'D',
-  theme = 'dark',
+  theme: propTheme,
   height = 500,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
+  const { theme: appTheme } = useTheme();
+  const theme = propTheme || appTheme;
   
   useEffect(() => {
     // Clean up previous widget
@@ -67,16 +69,16 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = memo(({
   }, [symbol, interval, theme]);
   
   return (
-    <TiltCard className="overflow-hidden" intensity={2}>
-      <div className="p-4 border-b border-border/50">
+    <div className="glass-card overflow-hidden">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-medium">TradingView Chart</h3>
             <p className="text-sm text-muted-foreground">Real-time technical analysis</p>
           </div>
           <div className="flex items-center gap-2 text-xs">
-            <span className="px-2 py-1 rounded-full bg-secondary/50">{symbol}</span>
-            <span className="px-2 py-1 rounded-full bg-secondary/50">{interval}</span>
+            <span className="px-2 py-1 rounded-full bg-secondary">{symbol}</span>
+            <span className="px-2 py-1 rounded-full bg-secondary">{interval}</span>
           </div>
         </div>
       </div>
@@ -90,7 +92,7 @@ export const TradingViewChart: React.FC<TradingViewChartProps> = memo(({
           style={{ height: '100%', width: '100%' }}
         />
       </div>
-    </TiltCard>
+    </div>
   );
 });
 
@@ -145,7 +147,7 @@ TradingViewTicker.displayName = 'TradingViewTicker';
 // Technical Analysis Widget
 export const TradingViewAnalysis: React.FC<{ symbol?: string }> = memo(({ symbol = 'NSE:NIFTY' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  
+  const { theme } = useTheme();
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.innerHTML = '';
@@ -164,17 +166,17 @@ export const TradingViewAnalysis: React.FC<{ symbol?: string }> = memo(({ symbol
       showIntervalTabs: true,
       displayMode: 'single',
       locale: 'en',
-      colorTheme: 'dark',
+      colorTheme: theme,
     });
     
     if (containerRef.current) {
       containerRef.current.appendChild(script);
     }
-  }, [symbol]);
+  }, [symbol, theme]);
   
   return (
-    <TiltCard className="overflow-hidden" intensity={3}>
-      <div className="p-4 border-b border-border/50">
+    <div className="glass-card overflow-hidden">
+      <div className="p-4 border-b border-border">
         <h3 className="font-medium">Technical Analysis</h3>
         <p className="text-sm text-muted-foreground">RSI, MACD, Moving Averages & more</p>
       </div>
@@ -183,7 +185,7 @@ export const TradingViewAnalysis: React.FC<{ symbol?: string }> = memo(({ symbol
         ref={containerRef}
         style={{ height: '400px' }}
       />
-    </TiltCard>
+    </div>
   );
 });
 
