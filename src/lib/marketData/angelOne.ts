@@ -45,7 +45,7 @@ class AngelOneWebSocket {
   private reconnectDelay = 1000;
   private subscribedSymbols: Set<string> = new Set();
   private mockMode = true; // Set to false when using real API
-  private mockInterval: NodeJS.Timer | null = null;
+  private mockInterval: ReturnType<typeof setInterval> | null = null;
   
   // Symbol token mapping for NSE
   private static TOKEN_MAP: Record<string, string> = {
