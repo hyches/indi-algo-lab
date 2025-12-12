@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { TiltCard } from '@/components/ui/TiltCard';
+import { GlassButton } from '@/components/ui/GlassButton';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { cn } from '@/lib/utils';
 import { 
@@ -158,7 +158,7 @@ export const BacktestingPanel: React.FC = () => {
       </div>
       
       {/* Configuration */}
-      <TiltCard className="p-6" intensity={3}>
+      <div className="glass-card p-6">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-medium">Strategy Configuration</h3>
@@ -292,7 +292,7 @@ export const BacktestingPanel: React.FC = () => {
             </GlassButton>
           </div>
         </div>
-      </TiltCard>
+      </div>
       
       {/* Results */}
       {result && (
@@ -342,7 +342,7 @@ export const BacktestingPanel: React.FC = () => {
           {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Equity Curve */}
-            <TiltCard className="p-6" intensity={3}>
+            <div className="glass-card p-6">
               <h3 className="font-medium mb-4">Equity Curve</h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -383,10 +383,10 @@ export const BacktestingPanel: React.FC = () => {
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-            </TiltCard>
+            </div>
             
             {/* Drawdown */}
-            <TiltCard className="p-6" intensity={3}>
+            <div className="glass-card p-6">
               <h3 className="font-medium mb-4">Drawdown</h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -427,13 +427,13 @@ export const BacktestingPanel: React.FC = () => {
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-            </TiltCard>
+            </div>
           </div>
           
           {/* Monthly Returns & Trade List */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Monthly Returns */}
-            <TiltCard className="p-6" intensity={3}>
+            <div className="glass-card p-6">
               <h3 className="font-medium mb-4">Monthly Returns</h3>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
@@ -469,7 +469,7 @@ export const BacktestingPanel: React.FC = () => {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-            </TiltCard>
+            </div>
             
             {/* Recent Trades */}
             <TiltCard className="p-6" intensity={3}>

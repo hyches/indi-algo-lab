@@ -5,7 +5,67 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @layer base {
+  /* Light Theme */
   :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 98%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 187 94% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 20% 92%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 217 20% 95%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 217 20% 90%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 350 89% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 160 84% 35%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 45%;
+    --warning-foreground: 222 47% 11%;
+
+    --border: 217 20% 85%;
+    --input: 217 20% 90%;
+    --ring: 187 94% 35%;
+
+    --radius: 0.75rem;
+
+    /* Glass effect tokens */
+    --glass-bg: 0 0% 100% / 0.8;
+    --glass-border: 217 20% 50% / 0.15;
+    --glass-highlight: 0 0% 100% / 0.5;
+    --glass-blur: 12px;
+
+    /* Chart colors */
+    --chart-bullish: 160 84% 35%;
+    --chart-bearish: 350 89% 50%;
+    --chart-neutral: 217 20% 50%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 187 94% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 217 20% 92%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 217 20% 85%;
+    --sidebar-ring: 187 94% 35%;
+  }
+
+  /* Dark Theme */
+  .dark {
     --background: 222 47% 6%;
     --foreground: 210 40% 98%;
 
@@ -40,7 +100,7 @@
     --input: 217 33% 15%;
     --ring: 187 94% 43%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
 
     /* Glass effect tokens */
     --glass-bg: 222 47% 11% / 0.6;
@@ -127,16 +187,9 @@
     box-shadow: 0 0 30px hsl(var(--primary) / 0.15);
   }
 
-  /* Tilt Card Effect */
-  .tilt-card {
-    @apply glass-card transition-transform duration-200 ease-out;
-    transform-style: preserve-3d;
-    perspective: 1000px;
-  }
-
-  .tilt-card-inner {
-    @apply relative z-10;
-    transform: translateZ(20px);
+  /* Simple card styling */
+  .simple-card {
+    @apply glass-card p-4;
   }
 
   /* Glow effects */

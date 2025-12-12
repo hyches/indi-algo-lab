@@ -1,5 +1,4 @@
 import React from 'react';
-import { TiltCard } from '@/components/ui/TiltCard';
 import { useTrading } from '@/contexts/TradingContext';
 import { TrendingUp, TrendingDown, Star, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -39,12 +38,11 @@ const WatchlistItem: React.FC<WatchlistItemProps> = ({
   const isPositive = change >= 0;
   
   return (
-    <TiltCard 
+    <div 
       className={cn(
-        'p-4 cursor-pointer group transition-all',
+        'glass-card p-4 cursor-pointer group transition-all relative hover:border-primary/30',
         isSelected && 'ring-2 ring-primary'
       )}
-      intensity={5}
       onClick={onClick}
     >
       <div className="flex items-center justify-between">
@@ -90,7 +88,7 @@ const WatchlistItem: React.FC<WatchlistItemProps> = ({
       <button className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary">
         <Star size={14} />
       </button>
-    </TiltCard>
+    </div>
   );
 };
 

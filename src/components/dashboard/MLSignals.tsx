@@ -1,5 +1,4 @@
 import React from 'react';
-import { TiltCard } from '@/components/ui/TiltCard';
 import { mlSignals, MLSignal } from '@/lib/mockData';
 import { cn } from '@/lib/utils';
 import { Brain, TrendingUp, TrendingDown, Minus, Zap } from 'lucide-react';
@@ -37,7 +36,7 @@ const SignalCard: React.FC<SignalCardProps> = ({ signal }) => {
   const SignalIcon = config.icon;
 
   return (
-    <TiltCard className={cn('p-4 border', config.border)} intensity={5}>
+    <div className={cn('glass-card p-4 border', config.border)}>
       <div className="flex items-start justify-between">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
@@ -94,7 +93,7 @@ const SignalCard: React.FC<SignalCardProps> = ({ signal }) => {
         <span>Last Updated</span>
         <span>{signal.timestamp.toLocaleTimeString()}</span>
       </div>
-    </TiltCard>
+    </div>
   );
 };
 
@@ -123,7 +122,7 @@ export const MLSignals: React.FC = () => {
         ))}
       </div>
 
-      <TiltCard className="p-4" intensity={3}>
+      <div className="glass-card p-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-muted">
             <Brain size={18} className="text-muted-foreground" />
@@ -139,7 +138,7 @@ export const MLSignals: React.FC = () => {
             <span className="text-muted-foreground">Recording</span>
           </div>
         </div>
-      </TiltCard>
+      </div>
     </div>
   );
 };

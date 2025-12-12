@@ -1,5 +1,4 @@
 import React from 'react';
-import { TiltCard } from '@/components/ui/TiltCard';
 import { portfolioSummary } from '@/lib/mockData';
 import { TrendingUp, TrendingDown, Wallet, Target, Activity, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -26,14 +25,14 @@ interface StatCardProps {
 }
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, subValue, icon, trend }) => (
-  <TiltCard className="p-5" intensity={6}>
+  <div className="glass-card p-5 hover:border-primary/30 transition-colors">
     <div className="flex items-start justify-between">
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">{title}</p>
         <p className={cn(
           'text-2xl font-semibold font-mono',
-          trend === 'up' && 'text-emerald-400',
-          trend === 'down' && 'text-rose-400',
+          trend === 'up' && 'text-success',
+          trend === 'down' && 'text-destructive',
           trend === 'neutral' && 'text-foreground'
         )}>
           {value}
@@ -44,14 +43,14 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, subValue, icon, trend
       </div>
       <div className={cn(
         'p-2.5 rounded-xl',
-        trend === 'up' && 'bg-emerald-500/10 text-emerald-400',
-        trend === 'down' && 'bg-rose-500/10 text-rose-400',
+        trend === 'up' && 'bg-success/10 text-success',
+        trend === 'down' && 'bg-destructive/10 text-destructive',
         trend === 'neutral' && 'bg-primary/10 text-primary'
       )}>
         {icon}
       </div>
     </div>
-  </TiltCard>
+  </div>
 );
 
 export const PortfolioOverview: React.FC = () => {
