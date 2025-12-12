@@ -1,29 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TiltCard } from '@/components/ui/TiltCard';
 import { GlassButton } from '@/components/ui/GlassButton';
+import { useTrading } from '@/contexts/TradingContext';
 import { cn } from '@/lib/utils';
-import { ArrowUpCircle, ArrowDownCircle, Calculator } from 'lucide-react';
+import { ArrowUpCircle, ArrowDownCircle, Calculator, Loader2 } from 'lucide-react';
 
 interface TradePanelProps {
   symbol?: string;
-  type?: 'CE' | 'PE' | 'FUT';
+  type?: 'CE' | 'PE' | 'FUT' | 'EQ';
   strike?: number;
   expiry?: string;
 }
 
 export const TradePanel: React.FC<TradePanelProps> = ({
-  symbol = 'NIFTY',
-  type = 'CE',
-  strike = 24900,
+  symbol: propSymbol,
+  type: propType = 'CE',
+  strike: propStrike = 24900,
   expiry = '26-DEC-24',
 }) => {
+  const { selectedSymbol, selectedOption, quotes, executeTrade, portfolio } = useTrading();
+  
+  const symbol = propSymbol || selectedSymbol;
+  const type = selectedOption?.type || propType;
+  const strike = selectedOption?.strike || propStrike;
+
   const [action, setAction] = useState<'BUY' | 'SELL'>('BUY');
   const [qty, setQty] = useState(50);
   const [price, setPrice] = useState(210.25);
   const [orderType, setOrderType] = useState<'MARKET' | 'LIMIT'>('MARKET');
+  const [isExecuting, setIsExecuting] = useState(false);
 
   const lotSize = symbol === 'NIFTY' ? 50 : symbol === 'BANKNIFTY' ? 15 : 250;
-  const margin = action === 'BUY' ? qty * price : qty * price * 0.15;
+  
+  // Get live price from quotes
+  const quote = quotes.get(symbol);
+  const livePrice = quote?.regularMarketPrice || price;
+  
+  // For options, calculate approximate option price
+  const optionPrice = type === 'EQ' || type === 'FUT' 
+    ? livePrice 
+    : Math.abs(livePrice - strike) + (Math.random() * 50 + 50);
+  
+  const executionPrice = orderType === 'MARKET' ? optionPrice : price;
+  const margin = action === 'BUY' ? qty * executionPrice : qty * executionPrice * 0.15;
+
+  // Update price when switching to LIMIT
+  useEffect(() => {
+    if (orderType === 'LIMIT') {
+      setPrice(Math.round(optionPrice * 100) / 100);
+    }
+  }, [orderType, optionPrice]);
+
+  const handleExecute = async () => {
+    setIsExecuting(true);
+    try {
+      await executeTrade({
+        symbol,
+        type,
+        action,
+        qty,
+        price: executionPrice,
+        strike: type === 'CE' || type === 'PE' ? strike : undefined,
+        expiry,
+        orderType,
+      });
+    } catch (error) {
+      // Error handled in context
+    } finally {
+      setIsExecuting(false);
+    }
+  };
+
+  const canAfford = action === 'SELL' || margin <= portfolio.availableMargin;
 
   return (
     <div className="space-y-4">
@@ -34,14 +82,32 @@ export const TradePanel: React.FC<TradePanelProps> = ({
             'text-xs px-2 py-1 rounded-full font-medium',
             type === 'CE' && 'bg-emerald-500/20 text-emerald-400',
             type === 'PE' && 'bg-rose-500/20 text-rose-400',
-            type === 'FUT' && 'bg-primary/20 text-primary'
+            type === 'FUT' && 'bg-primary/20 text-primary',
+            type === 'EQ' && 'bg-muted text-muted-foreground'
           )}>
-            {symbol} {type} {strike}
+            {symbol} {type !== 'EQ' && type} {(type === 'CE' || type === 'PE') && strike}
           </span>
         </div>
       </div>
 
       <TiltCard className="p-5 space-y-5" intensity={4}>
+        {/* Live Price Display */}
+        {quote && (
+          <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30">
+            <span className="text-sm text-muted-foreground">Live Price</span>
+            <div className="text-right">
+              <span className="font-mono font-semibold">₹{livePrice.toFixed(2)}</span>
+              <span className={cn(
+                'ml-2 text-xs',
+                quote.regularMarketChange >= 0 ? 'text-emerald-400' : 'text-rose-400'
+              )}>
+                {quote.regularMarketChange >= 0 ? '+' : ''}{quote.regularMarketChange.toFixed(2)}
+                ({quote.regularMarketChangePercent.toFixed(2)}%)
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Action Toggle */}
         <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-muted/50">
           <button
@@ -74,18 +140,18 @@ export const TradePanel: React.FC<TradePanelProps> = ({
         <div className="space-y-2">
           <label className="text-sm text-muted-foreground">Order Type</label>
           <div className="grid grid-cols-2 gap-2">
-            {(['MARKET', 'LIMIT'] as const).map(type => (
+            {(['MARKET', 'LIMIT'] as const).map(t => (
               <button
-                key={type}
-                onClick={() => setOrderType(type)}
+                key={t}
+                onClick={() => setOrderType(t)}
                 className={cn(
                   'py-2 rounded-lg text-sm font-medium transition-all border',
-                  orderType === type
+                  orderType === t
                     ? 'border-primary bg-primary/10 text-primary'
                     : 'border-border text-muted-foreground hover:border-primary/50'
                 )}
               >
-                {type}
+                {t}
               </button>
             ))}
           </div>
@@ -123,7 +189,7 @@ export const TradePanel: React.FC<TradePanelProps> = ({
         {/* Price */}
         {orderType === 'LIMIT' && (
           <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">Price</label>
+            <label className="text-sm text-muted-foreground">Limit Price</label>
             <input
               type="number"
               value={price}
@@ -142,12 +208,27 @@ export const TradePanel: React.FC<TradePanelProps> = ({
           </div>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
+              <span className="text-muted-foreground">Est. Price</span>
+              <span className="font-mono">₹{executionPrice.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
               <span className="text-muted-foreground">Value</span>
-              <span className="font-mono">₹{(qty * price).toLocaleString('en-IN')}</span>
+              <span className="font-mono">₹{(qty * executionPrice).toLocaleString('en-IN')}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Required Margin</span>
-              <span className="font-mono">₹{margin.toLocaleString('en-IN')}</span>
+              <span className={cn(
+                'font-mono',
+                !canAfford && 'text-rose-400'
+              )}>
+                ₹{margin.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Available</span>
+              <span className="font-mono text-emerald-400">
+                ₹{portfolio.availableMargin.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Lots</span>
@@ -162,9 +243,26 @@ export const TradePanel: React.FC<TradePanelProps> = ({
           size="lg"
           className="w-full"
           withTilt
+          onClick={handleExecute}
+          disabled={isExecuting || !canAfford}
         >
-          {action} {qty} @ {orderType === 'MARKET' ? 'Market' : `₹${price}`}
+          {isExecuting ? (
+            <>
+              <Loader2 size={18} className="animate-spin mr-2" />
+              Executing...
+            </>
+          ) : (
+            <>
+              {action} {qty} @ {orderType === 'MARKET' ? 'Market' : `₹${price.toFixed(2)}`}
+            </>
+          )}
         </GlassButton>
+
+        {!canAfford && (
+          <p className="text-xs text-rose-400 text-center">
+            Insufficient margin. Reduce quantity or close existing positions.
+          </p>
+        )}
       </TiltCard>
     </div>
   );

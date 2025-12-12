@@ -10,22 +10,15 @@ import { MLSignals } from '@/components/dashboard/MLSignals';
 import { BacktestingPanel } from '@/components/dashboard/BacktestingPanel';
 import { MLTrainingPanel } from '@/components/dashboard/MLTrainingPanel';
 import { TradingViewChart, TradingViewAnalysis } from '@/components/dashboard/TradingViewChart';
-import { StockQuote } from '@/lib/mockData';
+import { TradeHistory } from '@/components/dashboard/TradeHistory';
+import { TradingProvider, useTrading } from '@/contexts/TradingContext';
 
-const Index: React.FC = () => {
+const DashboardContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [selectedStock, setSelectedStock] = useState<StockQuote | null>(null);
-  const [selectedOption, setSelectedOption] = useState<{
-    type: 'CE' | 'PE';
-    strike: number;
-  } | null>(null);
-
-  const handleSelectStock = (stock: StockQuote) => {
-    setSelectedStock(stock);
-  };
+  const { selectedSymbol, selectedOption, setSelectedOption } = useTrading();
 
   const handleSelectOption = (type: 'CE' | 'PE', strike: number) => {
-    setSelectedOption({ type, strike });
+    setSelectedOption({ type, strike, expiry: '26-DEC-24' });
   };
 
   return (
@@ -48,15 +41,15 @@ const Index: React.FC = () => {
               
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 <div className="xl:col-span-2 space-y-6">
-                  <Watchlist onSelectStock={handleSelectStock} />
+                  <Watchlist />
                   <OptionChain 
-                    symbol={selectedStock?.symbol || 'NIFTY'}
+                    symbol={selectedSymbol}
                     onSelectOption={handleSelectOption}
                   />
                 </div>
                 <div className="space-y-6">
                   <TradePanel 
-                    symbol={selectedStock?.symbol || 'NIFTY'}
+                    symbol={selectedSymbol}
                     type={selectedOption?.type || 'CE'}
                     strike={selectedOption?.strike || 24900}
                   />
@@ -69,12 +62,12 @@ const Index: React.FC = () => {
           {activeTab === 'charts' && (
             <div className="space-y-6">
               <TradingViewChart 
-                symbol={`NSE:${selectedStock?.symbol || 'NIFTY'}`}
+                symbol={`NSE:${selectedSymbol}`}
                 height={600}
               />
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <TradingViewAnalysis symbol={`NSE:${selectedStock?.symbol || 'NIFTY'}`} />
-                <Watchlist onSelectStock={handleSelectStock} />
+                <TradingViewAnalysis symbol={`NSE:${selectedSymbol}`} />
+                <Watchlist />
               </div>
             </div>
           )}
@@ -83,13 +76,13 @@ const Index: React.FC = () => {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
               <div className="xl:col-span-2">
                 <OptionChain 
-                  symbol={selectedStock?.symbol || 'NIFTY'}
+                  symbol={selectedSymbol}
                   onSelectOption={handleSelectOption}
                 />
               </div>
               <div>
                 <TradePanel 
-                  symbol={selectedStock?.symbol || 'NIFTY'}
+                  symbol={selectedSymbol}
                   type={selectedOption?.type || 'CE'}
                   strike={selectedOption?.strike || 24900}
                 />
@@ -110,22 +103,18 @@ const Index: React.FC = () => {
 
           {activeTab === 'portfolio' && <PortfolioOverview />}
 
-          {activeTab === 'history' && (
-            <div className="flex items-center justify-center h-[60vh] glass-card rounded-2xl">
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 mx-auto rounded-2xl bg-muted flex items-center justify-center">
-                  <span className="text-2xl">📊</span>
-                </div>
-                <h3 className="text-xl font-semibold">Trade History</h3>
-                <p className="text-muted-foreground max-w-md">
-                  Complete trade history with analytics coming soon.
-                </p>
-              </div>
-            </div>
-          )}
+          {activeTab === 'history' && <TradeHistory />}
         </div>
       </main>
     </div>
+  );
+};
+
+const Index: React.FC = () => {
+  return (
+    <TradingProvider>
+      <DashboardContent />
+    </TradingProvider>
   );
 };
 
