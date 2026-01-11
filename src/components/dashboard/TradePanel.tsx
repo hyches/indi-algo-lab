@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { GlassButton } from '@/components/ui/GlassButton';
 import { useTrading } from '@/contexts/TradingContext';
 import { cn } from '@/lib/utils';
-import { ArrowUpCircle, ArrowDownCircle, Calculator, Loader2 } from 'lucide-react';
+import { ArrowUpCircle, ArrowDownCircle, Calculator, Loader2, TrendingUp, Briefcase } from 'lucide-react';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 
 interface TradePanelProps {
   symbol?: string;
@@ -13,23 +19,39 @@ interface TradePanelProps {
 
 export const TradePanel: React.FC<TradePanelProps> = ({
   symbol: propSymbol,
-  type: propType = 'CE',
+  type: propType = 'EQ',
   strike: propStrike = 24900,
   expiry = '26-DEC-24',
 }) => {
   const { selectedSymbol, selectedOption, quotes, executeTrade, portfolio } = useTrading();
   
   const symbol = propSymbol || selectedSymbol;
-  const type = selectedOption?.type || propType;
+  
+  const [tradingMode, setTradingMode] = useState<'equity' | 'derivatives'>('equity');
+  const [type, setType] = useState<'CE' | 'PE' | 'FUT' | 'EQ'>(tradingMode === 'equity' ? 'EQ' : propType);
   const strike = selectedOption?.strike || propStrike;
 
   const [action, setAction] = useState<'BUY' | 'SELL'>('BUY');
-  const [qty, setQty] = useState(50);
+  const [qty, setQty] = useState(1);
   const [price, setPrice] = useState(210.25);
   const [orderType, setOrderType] = useState<'MARKET' | 'LIMIT'>('MARKET');
   const [isExecuting, setIsExecuting] = useState(false);
 
-  const lotSize = symbol === 'NIFTY' ? 50 : symbol === 'BANKNIFTY' ? 15 : 250;
+  // Update type when trading mode changes
+  useEffect(() => {
+    if (tradingMode === 'equity') {
+      setType('EQ');
+      setQty(1);
+    } else {
+      setType(selectedOption?.type || 'CE');
+      const lotSize = symbol === 'NIFTY' ? 50 : symbol === 'BANKNIFTY' ? 15 : 250;
+      setQty(lotSize);
+    }
+  }, [tradingMode, symbol, selectedOption]);
+
+  const lotSize = tradingMode === 'derivatives' 
+    ? (symbol === 'NIFTY' ? 50 : symbol === 'BANKNIFTY' ? 15 : 250)
+    : 1;
   
   // Get live price from quotes
   const quote = quotes.get(symbol);
@@ -41,7 +63,11 @@ export const TradePanel: React.FC<TradePanelProps> = ({
     : Math.abs(livePrice - strike) + (Math.random() * 50 + 50);
   
   const executionPrice = orderType === 'MARKET' ? optionPrice : price;
-  const margin = action === 'BUY' ? qty * executionPrice : qty * executionPrice * 0.15;
+  
+  // Calculate margin - higher for derivatives, full amount for equity
+  const margin = tradingMode === 'equity'
+    ? qty * executionPrice
+    : action === 'BUY' ? qty * executionPrice : qty * executionPrice * 0.15;
 
   // Update price when switching to LIMIT
   useEffect(() => {
@@ -60,7 +86,7 @@ export const TradePanel: React.FC<TradePanelProps> = ({
         qty,
         price: executionPrice,
         strike: type === 'CE' || type === 'PE' ? strike : undefined,
-        expiry,
+        expiry: tradingMode === 'derivatives' ? expiry : undefined,
         orderType,
       });
     } catch (error) {
@@ -82,18 +108,34 @@ export const TradePanel: React.FC<TradePanelProps> = ({
             type === 'CE' && 'bg-emerald-500/20 text-emerald-400',
             type === 'PE' && 'bg-rose-500/20 text-rose-400',
             type === 'FUT' && 'bg-primary/20 text-primary',
-            type === 'EQ' && 'bg-muted text-muted-foreground'
+            type === 'EQ' && 'bg-blue-500/20 text-blue-400'
           )}>
-            {symbol} {type !== 'EQ' && type} {(type === 'CE' || type === 'PE') && strike}
+            {symbol} {type === 'EQ' ? 'Equity' : type} {(type === 'CE' || type === 'PE') && strike}
           </span>
         </div>
       </div>
 
       <div className="glass-card p-5 space-y-5">
+        {/* Trading Mode Tabs */}
+        <Tabs value={tradingMode} onValueChange={(v) => setTradingMode(v as 'equity' | 'derivatives')} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-muted/50">
+            <TabsTrigger value="equity" className="gap-2">
+              <Briefcase size={14} />
+              Stocks
+            </TabsTrigger>
+            <TabsTrigger value="derivatives" className="gap-2">
+              <TrendingUp size={14} />
+              F&O
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+
         {/* Live Price Display */}
         {quote && (
           <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30">
-            <span className="text-sm text-muted-foreground">Live Price</span>
+            <span className="text-sm text-muted-foreground">
+              {tradingMode === 'equity' ? 'Stock Price' : 'Underlying'}
+            </span>
             <div className="text-right">
               <span className="font-mono font-semibold">₹{livePrice.toFixed(2)}</span>
               <span className={cn(
@@ -103,6 +145,31 @@ export const TradePanel: React.FC<TradePanelProps> = ({
                 {quote.regularMarketChange >= 0 ? '+' : ''}{quote.regularMarketChange.toFixed(2)}
                 ({quote.regularMarketChangePercent.toFixed(2)}%)
               </span>
+            </div>
+          </div>
+        )}
+
+        {/* Derivative Type Selection */}
+        {tradingMode === 'derivatives' && (
+          <div className="space-y-2">
+            <label className="text-sm text-muted-foreground">Instrument Type</label>
+            <div className="grid grid-cols-3 gap-2">
+              {(['CE', 'PE', 'FUT'] as const).map(t => (
+                <button
+                  key={t}
+                  onClick={() => setType(t)}
+                  className={cn(
+                    'py-2 rounded-lg text-sm font-medium transition-all border',
+                    type === t
+                      ? t === 'CE' ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400'
+                        : t === 'PE' ? 'border-rose-500 bg-rose-500/10 text-rose-400'
+                        : 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/50'
+                  )}
+                >
+                  {t === 'CE' ? 'Call' : t === 'PE' ? 'Put' : 'Future'}
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -160,7 +227,7 @@ export const TradePanel: React.FC<TradePanelProps> = ({
         <div className="space-y-2">
           <label className="text-sm text-muted-foreground flex items-center justify-between">
             <span>Quantity</span>
-            <span className="text-xs">Lot Size: {lotSize}</span>
+            {tradingMode === 'derivatives' && <span className="text-xs">Lot Size: {lotSize}</span>}
           </label>
           <div className="flex gap-2">
             <button
@@ -172,8 +239,8 @@ export const TradePanel: React.FC<TradePanelProps> = ({
             <input
               type="number"
               value={qty}
-              onChange={(e) => setQty(Math.max(lotSize, parseInt(e.target.value) || lotSize))}
-              step={lotSize}
+              onChange={(e) => setQty(Math.max(1, parseInt(e.target.value) || 1))}
+              step={tradingMode === 'equity' ? 1 : lotSize}
               className="flex-1 bg-muted/50 border border-border rounded-xl px-4 py-2 text-center font-mono text-lg focus:outline-none focus:border-primary transition-colors"
             />
             <button
@@ -215,7 +282,9 @@ export const TradePanel: React.FC<TradePanelProps> = ({
               <span className="font-mono">₹{(qty * executionPrice).toLocaleString('en-IN')}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Required Margin</span>
+              <span className="text-muted-foreground">
+                {tradingMode === 'equity' ? 'Total Amount' : 'Required Margin'}
+              </span>
               <span className={cn(
                 'font-mono',
                 !canAfford && 'text-rose-400'
@@ -229,10 +298,12 @@ export const TradePanel: React.FC<TradePanelProps> = ({
                 ₹{portfolio.availableMargin.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Lots</span>
-              <span className="font-mono">{qty / lotSize}</span>
-            </div>
+            {tradingMode === 'derivatives' && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Lots</span>
+                <span className="font-mono">{qty / lotSize}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -241,7 +312,6 @@ export const TradePanel: React.FC<TradePanelProps> = ({
           variant={action === 'BUY' ? 'success' : 'destructive'}
           size="lg"
           className="w-full"
-          withTilt
           onClick={handleExecute}
           disabled={isExecuting || !canAfford}
         >
@@ -252,14 +322,14 @@ export const TradePanel: React.FC<TradePanelProps> = ({
             </>
           ) : (
             <>
-              {action} {qty} @ {orderType === 'MARKET' ? 'Market' : `₹${price.toFixed(2)}`}
+              {action} {qty} {tradingMode === 'equity' ? 'shares' : 'qty'} @ {orderType === 'MARKET' ? 'Market' : `₹${price.toFixed(2)}`}
             </>
           )}
         </GlassButton>
 
         {!canAfford && (
           <p className="text-xs text-destructive text-center">
-            Insufficient margin. Reduce quantity or close existing positions.
+            Insufficient {tradingMode === 'equity' ? 'funds' : 'margin'}. Reduce quantity or close existing positions.
           </p>
         )}
       </div>

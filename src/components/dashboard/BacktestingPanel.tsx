@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { GlassButton } from '@/components/ui/GlassButton';
-import { GlassButton } from '@/components/ui/GlassButton';
 import { cn } from '@/lib/utils';
 import { 
   Play, 
@@ -472,7 +471,7 @@ export const BacktestingPanel: React.FC = () => {
             </div>
             
             {/* Recent Trades */}
-            <TiltCard className="p-6" intensity={3}>
+            <div className="glass-card p-6">
               <h3 className="font-medium mb-4">Recent Trades</h3>
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {result.trades.slice(-10).reverse().map((trade, i) => (
@@ -501,11 +500,11 @@ export const BacktestingPanel: React.FC = () => {
                   </div>
                 ))}
               </div>
-            </TiltCard>
+            </div>
           </div>
           
           {/* Additional Metrics */}
-          <TiltCard className="p-6" intensity={3}>
+          <div className="glass-card p-6">
             <h3 className="font-medium mb-4">Detailed Statistics</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 text-sm">
               <div>
@@ -533,7 +532,7 @@ export const BacktestingPanel: React.FC = () => {
                 <p className="font-mono font-medium text-rose-400">₹{result.largestLoss.toFixed(0)}</p>
               </div>
             </div>
-          </TiltCard>
+          </div>
         </>
       )}
     </div>
