@@ -1,5 +1,5 @@
 // ML Feature Extraction from Trade Data
-import { Trade } from '@/lib/mockData';
+import { Trade } from '@/contexts/TradingContext';
 import { OHLCV, calculateRSI, calculateMACD, calculateBollingerBands, calculateATR, calculateSMA, calculateEMA } from '@/lib/backtesting/engine';
 
 export interface TradeFeatures {
