@@ -9,7 +9,8 @@ import {
   Settings,
   TrendingUp,
   Wallet,
-  FlaskConical
+  FlaskConical,
+  BarChart3
 } from 'lucide-react';
 
 interface NavItem {
@@ -25,9 +26,9 @@ const navItems: NavItem[] = [
   { icon: Layers, label: 'Options', id: 'options', category: 'trading' },
   { icon: TrendingUp, label: 'Positions', id: 'positions', category: 'trading' },
   { icon: History, label: 'History', id: 'history', category: 'trading' },
+  { icon: BarChart3, label: 'Analytics', id: 'analytics', category: 'main' },
   { icon: FlaskConical, label: 'Backtest', id: 'backtest', category: 'tools' },
   { icon: Brain, label: 'ML Signals', id: 'ml', category: 'tools' },
-  { icon: Wallet, label: 'Portfolio', id: 'portfolio', category: 'main' },
 ];
 
 interface SidebarProps {

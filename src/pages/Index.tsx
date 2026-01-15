@@ -11,6 +11,7 @@ import { BacktestingPanel } from '@/components/dashboard/BacktestingPanel';
 import { MLTrainingPanel } from '@/components/dashboard/MLTrainingPanel';
 import { TradingViewChart, TradingViewAnalysis } from '@/components/dashboard/TradingViewChart';
 import { TradeHistory } from '@/components/dashboard/TradeHistory';
+import { AnalyticsPanel } from '@/components/dashboard/AnalyticsPanel';
 import { TradingProvider, useTrading } from '@/contexts/TradingContext';
 
 const DashboardContent: React.FC = () => {
@@ -101,7 +102,7 @@ const DashboardContent: React.FC = () => {
 
           {activeTab === 'ml' && <MLTrainingPanel />}
 
-          {activeTab === 'portfolio' && <PortfolioOverview />}
+          {activeTab === 'analytics' && <AnalyticsPanel />}
 
           {activeTab === 'history' && <TradeHistory />}
         </div>
