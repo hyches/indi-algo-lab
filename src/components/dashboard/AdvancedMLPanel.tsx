@@ -336,7 +336,7 @@ export const AdvancedMLPanel: React.FC = () => {
                         <div><span className="text-muted-foreground">Sharpe:</span> <span className="font-mono">{model.performance.sharpeRatio.toFixed(2)}</span></div>
                       </div>
                     )}
-                    <GlassButton size="sm" variant="ghost" onClick={() => handleDeleteModel(model.id)}>
+                    <GlassButton size="sm" variant="destructive" onClick={() => handleDeleteModel(model.id)}>
                       <Trash2 size={14} />
                     </GlassButton>
                   </div>
