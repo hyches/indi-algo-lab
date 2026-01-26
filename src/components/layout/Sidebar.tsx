@@ -13,7 +13,8 @@ import {
   Search,
   BookOpen,
   Activity,
-  Globe
+  Globe,
+  Bell
 } from 'lucide-react';
 
 interface NavItem {
@@ -36,6 +37,7 @@ const navItems: NavItem[] = [
   { icon: BarChart3, label: 'Analytics', id: 'analytics', category: 'tools' },
   { icon: FlaskConical, label: 'Backtest', id: 'backtest', category: 'tools' },
   { icon: Brain, label: 'ML Signals', id: 'ml', category: 'tools' },
+  { icon: Bell, label: 'Alerts', id: 'alerts', category: 'tools' },
 ];
 
 interface SidebarProps {
@@ -93,7 +95,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
         </div>
       </nav>
 
-      <button className="w-12 h-12 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-all group relative">
+      <button 
+        onClick={() => onTabChange('settings')}
+        className={cn(
+          "w-12 h-12 rounded-xl flex items-center justify-center transition-all group relative",
+          activeTab === 'settings'
+            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
+            : "text-muted-foreground hover:text-foreground hover:bg-accent"
+        )}
+      >
         <Settings size={20} />
         <span className="absolute left-full ml-3 px-3 py-1.5 rounded-lg bg-popover text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-border shadow-lg">
           Settings
