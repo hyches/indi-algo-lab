@@ -88,16 +88,21 @@ export const BacktestingPanel: React.FC = () => {
   
   const runBacktestHandler = useCallback(async () => {
     setIsRunning(true);
-    
-    // Mock data removed - show error
-    alert('Mock data has been removed. Please connect to a real historical data provider.');
-    setIsRunning(false);
-    return;
-    
-    // Generate mock data
-    // const data: OHLCV[] = generateMockHistoricalData(symbol, days);
-    
-    // Find selected strategy config
+
+    try {
+      // Fetch real historical data from backend
+      const response = await fetch(`http://localhost:3001/api/market/historical/${symbol}?period=${days}d&interval=1d`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch historical data');
+      }
+
+      const data: OHLCV[] = await response.json();
+
+      // Find selected strategy config
+      const strategyDef = predefinedStrategies.find(s => s.name === selectedStrategy);
+      if (!strategyDef) {
+        setIsRunning(false);
+        return;
     const strategyDef = predefinedStrategies.find(s => s.name === selectedStrategy);
     if (!strategyDef) {
       setIsRunning(false);

@@ -77,10 +77,21 @@ export const AdvancedMLPanel: React.FC = () => {
 
   // Analyze market
   useEffect(() => {
-    const analyze = () => {
-      // Mock data removed - show error
-      console.error('Mock data has been removed. Cannot perform market analysis.');
-      alert('Mock data has been removed. Please connect to a real historical data provider for market analysis.');
+    const analyze = async () => {
+      try {
+        // Fetch real historical data from backend
+        const response = await fetch(`http://localhost:3001/api/market/historical/${selectedSymbol}?period=100d&interval=1d`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch analysis data');
+        }
+
+        const data: OHLCV[] = await response.json();
+        setMarketRegime(detectMarketRegime(data));
+        setChartPatterns(detectChartPatterns(data));
+        setCandlePatterns(detectCandlestickPatterns(data));
+      } catch (error) {
+        console.error('Market analysis error:', error);
+      }
     };
     analyze();
     const interval = setInterval(analyze, 30000);
@@ -90,17 +101,23 @@ export const AdvancedMLPanel: React.FC = () => {
   // Auto-predict
   useEffect(() => {
     if (!modelManager.hasTrainedModels()) return;
-    
+
     const predict = async () => {
       try {
-        // Mock data removed - show error
-        console.error('Mock data has been removed. Cannot perform predictions.');
-        alert('Mock data has been removed. Please connect to a real historical data provider for predictions.');
+        // Fetch real historical data from backend
+        const response = await fetch(`http://localhost:3001/api/market/historical/${selectedSymbol}?period=250d&interval=1d`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch prediction data');
+        }
+
+        const data: OHLCV[] = await response.json();
+        const result = await modelManager.predict(data);
+        setPrediction(result);
       } catch (e) {
         console.log('Prediction error:', e);
       }
     };
-    
+
     predict();
     const interval = setInterval(predict, 5000);
     return () => clearInterval(interval);
@@ -109,11 +126,27 @@ export const AdvancedMLPanel: React.FC = () => {
   const handleTrain = useCallback(async () => {
     setIsTraining(true);
     setTrainingHistory([]);
-    
+
     try {
-      // Mock data removed - show error
-      console.error('Mock data has been removed. Cannot train models.');
-      alert('Mock data has been removed. Please connect to a real historical data provider for model training.');
+      // Fetch real historical data from backend
+      const response = await fetch(`http://localhost:3001/api/market/historical/${selectedSymbol}?period=500d&interval=1d`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch training data');
+      }
+
+      const data: OHLCV[] = await response.json();
+      await modelManager.trainModel(selectedModelType, data, {
+        epochs: 50,
+        onProgress: (progress) => {
+          setTrainingProgress(progress);
+          setTrainingHistory(prev => [...prev, {
+            epoch: progress.epoch,
+            loss: progress.loss,
+            accuracy: progress.accuracy,
+          }]);
+        },
+      });
+      setModels(modelManager.getModelSummaries());
     } catch (e) {
       console.error('Training error:', e);
     } finally {

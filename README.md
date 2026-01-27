@@ -1,73 +1,106 @@
-# Welcome to your Lovable project
+# Indi Algo Lab
 
-## Project info
+A comprehensive algorithmic trading platform for Indian markets with machine learning capabilities.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Features
 
-## How can I edit this code?
+- **Real-time Market Data**: Live quotes from Yahoo Finance
+- **Algorithmic Trading**: Multiple trading strategies with backtesting
+- **Machine Learning**: TensorFlow.js models for price prediction
+- **Portfolio Management**: Track positions and performance
+- **Technical Analysis**: Chart patterns and indicators
+- **User Authentication**: Secure user management
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Frontend**: React + TypeScript + Vite + ShadCN/UI + Tailwind CSS
+- **Backend**: Node.js + Express + JWT Authentication
+- **ML**: TensorFlow.js for client-side predictions
+- **Data**: Yahoo Finance API for market data
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Setup
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js 18+
+- npm or yarn
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Backend Setup
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+cd backend
+npm install
+cp .env.example .env  # Configure your environment variables
+npm start
+```
 
-Follow these steps:
+The backend will run on `http://localhost:3001`
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Frontend Setup
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The frontend will run on `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## API Documentation
 
-**Use GitHub Codespaces**
+### Authentication
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - User login
+- `GET /api/auth/profile` - Get user profile
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Market Data
+- `GET /api/market/historical/:symbol` - Get historical data
+- `GET /api/market/quote/:symbol` - Get current quote
+- `POST /api/market/quotes` - Get multiple quotes
 
-## What technologies are used for this project?
+### User Data
+- `GET /api/user/portfolio` - Get user portfolio
+- `POST /api/user/portfolio` - Update portfolio
+- `GET /api/user/trades` - Get user trades
+- `POST /api/user/trades` - Add new trade
 
-This project is built with:
+## Development
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Available Scripts
 
-## How can I deploy this project?
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+### Backend Scripts
 
-## Can I connect a custom domain to my Lovable project?
+- `npm start` - Start production server
+- `npm run dev` - Start development server with nodemon
 
-Yes, you can!
+## Project Structure
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```
+├── backend/                 # Backend API
+│   ├── routes/             # API routes
+│   ├── server.js          # Main server file
+│   └── package.json       # Backend dependencies
+├── src/
+│   ├── components/        # React components
+│   ├── lib/              # Utilities and services
+│   ├── contexts/         # React contexts
+│   └── pages/            # Page components
+├── public/               # Static assets
+└── package.json         # Frontend dependencies
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.

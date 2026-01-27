@@ -167,15 +167,17 @@ export const MLTrainingPanel: React.FC = () => {
   const handleTrain = useCallback(async () => {
     setIsTraining(true);
     setTrainingHistory([]);
-    
+
     try {
-      // Mock data removed - show error
-      alert('Mock data has been removed. Please connect to a real historical data provider for training.');
-      return;
-      
-      const data = generateMockHistoricalData(selectedSymbol, 60);
+      // Fetch real historical data from backend
+      const response = await fetch(`http://localhost:3001/api/market/historical/${selectedSymbol}?period=60d&interval=1d`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch training data');
+      }
+
+      const data: OHLCV[] = await response.json();
       const trainingData = generateTrainingData(data, 15, 0.5);
-      
+
       console.log(`Training with ${trainingData.features.length} samples`);
       
       await tradingModel.train(
@@ -203,17 +205,23 @@ export const MLTrainingPanel: React.FC = () => {
   
   const handlePredict = useCallback(async () => {
     if (!modelReady) return;
-    
-    // Mock data removed - show error
-    alert('Mock data has been removed. Please connect to a real historical data provider for predictions.');
-    return;
-    
-    const data = generateMockHistoricalData(selectedSymbol, 5);
-    const features = extractFeaturesFromOHLCV(data, data.length - 1);
-    
-    if (features) {
-      const result = await tradingModel.predict(featuresToArray(features));
-      setPrediction(result);
+
+    try {
+      // Fetch real historical data from backend
+      const response = await fetch(`http://localhost:3001/api/market/historical/${selectedSymbol}?period=5d&interval=1d`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch prediction data');
+      }
+
+      const data: OHLCV[] = await response.json();
+      const features = extractFeaturesFromOHLCV(data, data.length - 1);
+
+      if (features) {
+        const result = await tradingModel.predict(featuresToArray(features));
+        setPrediction(result);
+      }
+    } catch (error) {
+      console.error('Prediction error:', error);
     }
   }, [modelReady, selectedSymbol]);
   
