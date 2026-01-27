@@ -23,7 +23,6 @@ import {
 } from 'lucide-react';
 import { tradingModel, TrainingProgress, PredictionResult } from '@/lib/ml/model';
 import { generateTrainingData, extractFeaturesFromOHLCV, featuresToArray, FEATURE_NAMES } from '@/lib/ml/featureExtractor';
-import { generateMockHistoricalData } from '@/lib/backtesting/engine';
 import { Progress } from '@/components/ui/progress';
 import { useTrading } from '@/contexts/TradingContext';
 import {
@@ -170,6 +169,10 @@ export const MLTrainingPanel: React.FC = () => {
     setTrainingHistory([]);
     
     try {
+      // Mock data removed - show error
+      alert('Mock data has been removed. Please connect to a real historical data provider for training.');
+      return;
+      
       const data = generateMockHistoricalData(selectedSymbol, 60);
       const trainingData = generateTrainingData(data, 15, 0.5);
       
@@ -200,6 +203,10 @@ export const MLTrainingPanel: React.FC = () => {
   
   const handlePredict = useCallback(async () => {
     if (!modelReady) return;
+    
+    // Mock data removed - show error
+    alert('Mock data has been removed. Please connect to a real historical data provider for predictions.');
+    return;
     
     const data = generateMockHistoricalData(selectedSymbol, 5);
     const features = extractFeaturesFromOHLCV(data, data.length - 1);

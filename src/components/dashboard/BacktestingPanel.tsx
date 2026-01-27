@@ -20,7 +20,6 @@ import {
 import {
   runBacktest,
   predefinedStrategies,
-  generateMockHistoricalData,
   BacktestResult,
   StrategyConfig,
   OHLCV,
@@ -90,8 +89,13 @@ export const BacktestingPanel: React.FC = () => {
   const runBacktestHandler = useCallback(async () => {
     setIsRunning(true);
     
+    // Mock data removed - show error
+    alert('Mock data has been removed. Please connect to a real historical data provider.');
+    setIsRunning(false);
+    return;
+    
     // Generate mock data
-    const data: OHLCV[] = generateMockHistoricalData(symbol, days);
+    // const data: OHLCV[] = generateMockHistoricalData(symbol, days);
     
     // Find selected strategy config
     const strategyDef = predefinedStrategies.find(s => s.name === selectedStrategy);

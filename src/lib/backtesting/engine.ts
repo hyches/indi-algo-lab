@@ -502,42 +502,6 @@ export const predefinedStrategies: { name: string; description: string; config: 
   },
 ];
 
-// Generate mock historical data for testing
-export function generateMockHistoricalData(symbol: string, days: number): OHLCV[] {
-  const data: OHLCV[] = [];
-  let basePrice = symbol === 'NIFTY' ? 24500 : symbol === 'BANKNIFTY' ? 52000 : 2900;
-  const volatility = 0.015;
-  
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - days);
-  
-  for (let i = 0; i < days * 375; i++) { // 375 minutes per trading day
-    const date = new Date(startDate.getTime() + i * 60000);
-    const hour = date.getHours();
-    
-    // Skip non-trading hours (9:15 AM to 3:30 PM IST)
-    if (hour < 9 || (hour === 9 && date.getMinutes() < 15) || hour > 15 || (hour === 15 && date.getMinutes() > 30)) {
-      continue;
-    }
-    
-    const change = (Math.random() - 0.5) * 2 * volatility * basePrice;
-    const open = basePrice;
-    const close = basePrice + change;
-    const high = Math.max(open, close) + Math.random() * volatility * basePrice * 0.5;
-    const low = Math.min(open, close) - Math.random() * volatility * basePrice * 0.5;
-    const volume = Math.floor(Math.random() * 1000000) + 500000;
-    
-    data.push({
-      timestamp: date,
-      open,
-      high,
-      low,
-      close,
-      volume,
-    });
-    
-    basePrice = close;
-  }
-  
-  return data;
-}
+// Mock data generation function removed
+
+

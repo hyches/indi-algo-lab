@@ -12,7 +12,7 @@ import {
 } from './modelTypes';
 import { ModelFactory } from './modelFactory';
 import { extractAdvancedFeatures, ADVANCED_FEATURE_NAMES } from './advancedFeatures';
-import { OHLCV, generateMockHistoricalData } from '@/lib/backtesting/engine';
+import { OHLCV } from '@/lib/backtesting/engine';
 
 export interface TrainingProgress {
   modelId: string;

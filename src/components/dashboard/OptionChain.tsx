@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { generateOptionChain, OptionData } from '@/lib/mockData';
 import { useTrading } from '@/contexts/TradingContext';
 import { cn } from '@/lib/utils';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, AlertTriangle } from 'lucide-react';
 
 const formatNumber = (value: number, decimals: number = 2) => {
   if (value >= 100000) {
@@ -73,7 +72,7 @@ export const OptionChain: React.FC<OptionChainProps> = ({ symbol = 'NIFTY', onSe
   const quote = quotes.get(symbol);
   const spotPrice = quote?.regularMarketPrice || 24850.50;
   
-  const optionChainData = useMemo(() => generateOptionChain(spotPrice), [spotPrice]);
+  const optionChainData: OptionData[] = useMemo(() => [], []); // Mock data removed
   const expiries = ['26-DEC-24', '02-JAN-25', '09-JAN-25', '30-JAN-25'];
 
   return (
@@ -98,20 +97,34 @@ export const OptionChain: React.FC<OptionChainProps> = ({ symbol = 'NIFTY', onSe
           <div className="text-center">STRIKE</div><div className="text-rose-400">PUT</div><div>IV</div><div>Chng</div><div>OI</div>
         </div>
         <div className="max-h-[400px] overflow-y-auto">
-          {optionChainData.map((row) => (
-            <OptionRow key={row.strikePrice} data={row} spotPrice={spotPrice}
-              onSelectCall={() => onSelectOption?.('CE', row.strikePrice)}
-              onSelectPut={() => onSelectOption?.('PE', row.strikePrice)} />
-          ))}
+          {optionChainData.length > 0 ? (
+            optionChainData.map((row) => (
+              <OptionRow key={row.strikePrice} data={row} spotPrice={spotPrice}
+                onSelectCall={() => onSelectOption?.('CE', row.strikePrice)}
+                onSelectPut={() => onSelectOption?.('PE', row.strikePrice)} />
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <AlertTriangle className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No Option Data Available</h3>
+              <p className="text-sm text-muted-foreground max-w-md">
+                Mock data has been removed. Connect to a real options data provider to display live option chains.
+              </p>
+            </div>
+          )}
         </div>
         <div className="grid grid-cols-2 gap-4 p-4 border-t border-border/50 bg-muted/20">
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">Total Call OI</p>
-            <p className="font-mono font-semibold text-emerald-400">{formatNumber(optionChainData.reduce((acc, row) => acc + row.callOI, 0), 0)}</p>
+            <p className="font-mono font-semibold text-emerald-400">
+              {optionChainData.length > 0 ? formatNumber(optionChainData.reduce((acc, row) => acc + row.callOI, 0), 0) : 'N/A'}
+            </p>
           </div>
           <div className="space-y-1 text-right">
             <p className="text-xs text-muted-foreground">Total Put OI</p>
-            <p className="font-mono font-semibold text-rose-400">{formatNumber(optionChainData.reduce((acc, row) => acc + row.putOI, 0), 0)}</p>
+            <p className="font-mono font-semibold text-rose-400">
+              {optionChainData.length > 0 ? formatNumber(optionChainData.reduce((acc, row) => acc + row.putOI, 0), 0) : 'N/A'}
+            </p>
           </div>
         </div>
       </div>

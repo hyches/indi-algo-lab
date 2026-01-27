@@ -40,75 +40,19 @@ const YAHOO_SYMBOL_MAP: Record<string, string> = {
   'HINDUNILVR': 'HINDUNILVR.NS',
 };
 
-// Simulated real-time data with realistic price movements
+// Yahoo Finance Service - Mock data removed
 class YahooFinanceService {
   private cache: Map<string, YahooQuote> = new Map();
   private subscribers: Map<string, ((quote: YahooQuote) => void)[]> = new Map();
   private updateInterval: ReturnType<typeof setInterval> | null = null;
   private isRunning = false;
 
-  // Base prices for simulation (close to real market values)
-  private basePrices: Record<string, { price: number; name: string }> = {
-    'NIFTY': { price: 24850, name: 'Nifty 50' },
-    'BANKNIFTY': { price: 52340, name: 'Bank Nifty' },
-    'RELIANCE': { price: 2945, name: 'Reliance Industries' },
-    'TCS': { price: 4125, name: 'Tata Consultancy Services' },
-    'HDFCBANK': { price: 1685, name: 'HDFC Bank' },
-    'INFY': { price: 1892, name: 'Infosys' },
-    'ICICIBANK': { price: 1245, name: 'ICICI Bank' },
-    'SBIN': { price: 825, name: 'State Bank of India' },
-    'TATAMOTORS': { price: 785, name: 'Tata Motors' },
-    'WIPRO': { price: 295, name: 'Wipro' },
-  };
-
   start(): void {
-    if (this.isRunning) return;
-    this.isRunning = true;
-
-    // Initialize base quotes
-    Object.entries(this.basePrices).forEach(([symbol, data]) => {
-      const openPrice = data.price * (1 + (Math.random() - 0.5) * 0.01);
-      const quote: YahooQuote = {
-        symbol,
-        shortName: data.name,
-        regularMarketPrice: data.price,
-        regularMarketChange: data.price - openPrice,
-        regularMarketChangePercent: ((data.price - openPrice) / openPrice) * 100,
-        regularMarketOpen: openPrice,
-        regularMarketDayHigh: data.price * 1.01,
-        regularMarketDayLow: data.price * 0.99,
-        regularMarketVolume: Math.floor(Math.random() * 10000000) + 1000000,
-        regularMarketPreviousClose: openPrice,
-        timestamp: new Date(),
-      };
-      this.cache.set(symbol, quote);
-    });
-
-    // Simulate real-time updates every 500ms
-    this.updateInterval = setInterval(() => {
-      this.cache.forEach((quote, symbol) => {
-        const volatility = symbol.includes('NIFTY') ? 0.0002 : 0.0005;
-        const change = (Math.random() - 0.5) * quote.regularMarketPrice * volatility * 2;
-        
-        const newPrice = Math.max(1, quote.regularMarketPrice + change);
-        const newChange = newPrice - quote.regularMarketOpen;
-        const newChangePercent = (newChange / quote.regularMarketOpen) * 100;
-
-        const updatedQuote: YahooQuote = {
-          ...quote,
-          regularMarketPrice: Math.round(newPrice * 100) / 100,
-          regularMarketChange: Math.round(newChange * 100) / 100,
-          regularMarketChangePercent: Math.round(newChangePercent * 100) / 100,
-          regularMarketDayHigh: Math.max(quote.regularMarketDayHigh, newPrice),
-          regularMarketDayLow: Math.min(quote.regularMarketDayLow, newPrice),
-          regularMarketVolume: quote.regularMarketVolume + Math.floor(Math.random() * 10000),
-          timestamp: new Date(),
-        };
-
-        this.cache.set(symbol, updatedQuote);
-        this.notifySubscribers(symbol, updatedQuote);
-      });
-    }, 500);
+    console.error('Mock data has been removed. Please implement real Yahoo Finance API integration.');
+    // Show alert to user
+    if (typeof window !== 'undefined') {
+      alert('Mock data has been removed. Please connect to a real Yahoo Finance API.');
+    }
   }
 
   stop(): void {
@@ -120,29 +64,11 @@ class YahooFinanceService {
   }
 
   subscribe(symbol: string, callback: (quote: YahooQuote) => void): () => void {
-    if (!this.subscribers.has(symbol)) {
-      this.subscribers.set(symbol, []);
+    console.error('Mock data has been removed. Cannot subscribe to real-time data.');
+    if (typeof window !== 'undefined') {
+      alert('Mock data has been removed. Please implement real Yahoo Finance API subscription.');
     }
-    this.subscribers.get(symbol)!.push(callback);
-
-    // Immediately send cached data if available
-    const cached = this.cache.get(symbol);
-    if (cached) {
-      callback(cached);
-    }
-
-    // Start service if not running
-    if (!this.isRunning) {
-      this.start();
-    }
-
-    return () => {
-      const subs = this.subscribers.get(symbol);
-      if (subs) {
-        const idx = subs.indexOf(callback);
-        if (idx > -1) subs.splice(idx, 1);
-      }
-    };
+    return () => {};
   }
 
   private notifySubscribers(symbol: string, quote: YahooQuote): void {
@@ -153,15 +79,18 @@ class YahooFinanceService {
   }
 
   getQuote(symbol: string): YahooQuote | undefined {
-    return this.cache.get(symbol);
+    console.error('Mock data has been removed. Cannot get quote data.');
+    return undefined;
   }
 
   getAllQuotes(): YahooQuote[] {
-    return Array.from(this.cache.values());
+    console.error('Mock data has been removed. Cannot get all quotes.');
+    return [];
   }
 
   getAvailableSymbols(): string[] {
-    return Object.keys(this.basePrices);
+    console.error('Mock data has been removed. Cannot get available symbols.');
+    return [];
   }
 }
 

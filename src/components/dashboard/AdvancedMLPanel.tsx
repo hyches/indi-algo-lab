@@ -34,7 +34,6 @@ import {
   detectCandlestickPatterns,
   ADVANCED_FEATURE_NAMES,
 } from '@/lib/ml/models/advancedFeatures';
-import { generateMockHistoricalData } from '@/lib/backtesting/engine';
 
 const MODEL_TYPES: { type: ModelType; icon: React.ReactNode; color: string }[] = [
   { type: 'dense_nn', icon: <Layers size={16} />, color: 'text-blue-400' },
@@ -79,10 +78,9 @@ export const AdvancedMLPanel: React.FC = () => {
   // Analyze market
   useEffect(() => {
     const analyze = () => {
-      const data = generateMockHistoricalData(selectedSymbol, 100);
-      setMarketRegime(detectMarketRegime(data));
-      setChartPatterns(detectChartPatterns(data));
-      setCandlePatterns(detectCandlestickPatterns(data));
+      // Mock data removed - show error
+      console.error('Mock data has been removed. Cannot perform market analysis.');
+      alert('Mock data has been removed. Please connect to a real historical data provider for market analysis.');
     };
     analyze();
     const interval = setInterval(analyze, 30000);
@@ -95,9 +93,9 @@ export const AdvancedMLPanel: React.FC = () => {
     
     const predict = async () => {
       try {
-        const data = generateMockHistoricalData(selectedSymbol, 250);
-        const result = await modelManager.predict(data);
-        setPrediction(result);
+        // Mock data removed - show error
+        console.error('Mock data has been removed. Cannot perform predictions.');
+        alert('Mock data has been removed. Please connect to a real historical data provider for predictions.');
       } catch (e) {
         console.log('Prediction error:', e);
       }
@@ -113,19 +111,9 @@ export const AdvancedMLPanel: React.FC = () => {
     setTrainingHistory([]);
     
     try {
-      const data = generateMockHistoricalData(selectedSymbol, 500);
-      await modelManager.trainModel(selectedModelType, data, {
-        epochs: 50,
-        onProgress: (progress) => {
-          setTrainingProgress(progress);
-          setTrainingHistory(prev => [...prev, {
-            epoch: progress.epoch,
-            loss: progress.loss,
-            accuracy: progress.accuracy,
-          }]);
-        },
-      });
-      setModels(modelManager.getModelSummaries());
+      // Mock data removed - show error
+      console.error('Mock data has been removed. Cannot train models.');
+      alert('Mock data has been removed. Please connect to a real historical data provider for model training.');
     } catch (e) {
       console.error('Training error:', e);
     } finally {

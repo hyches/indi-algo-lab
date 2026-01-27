@@ -35,7 +35,7 @@ export interface WebSocketMessage {
 type MessageHandler = (quote: MarketQuote) => void;
 type StatusHandler = (status: 'connected' | 'disconnected' | 'error' | 'reconnecting') => void;
 
-// Mock WebSocket for demo (replace with real Angel One WebSocket)
+// Angel One WebSocket - Mock functionality removed
 class AngelOneWebSocket {
   private ws: WebSocket | null = null;
   private messageHandlers: Map<string, MessageHandler[]> = new Map();
@@ -44,8 +44,6 @@ class AngelOneWebSocket {
   private maxReconnectAttempts = 5;
   private reconnectDelay = 1000;
   private subscribedSymbols: Set<string> = new Set();
-  private mockMode = true; // Set to false when using real API
-  private mockInterval: ReturnType<typeof setInterval> | null = null;
   
   // Symbol token mapping for NSE
   private static TOKEN_MAP: Record<string, string> = {
@@ -67,12 +65,10 @@ class AngelOneWebSocket {
   };
   
   async connect(credentials?: AngelOneCredentials): Promise<void> {
-    // In mock mode, simulate connection
-    if (this.mockMode) {
-      this.notifyStatus('connected');
-      this.startMockDataStream();
-      return;
-    }
+    // Mock mode removed - only real connection supported
+    console.log('Mock data removed. Please implement real Angel One WebSocket connection.');
+    this.notifyStatus('error');
+    return;
     
     // Real Angel One WebSocket connection
     // Would need to authenticate first and get JWT token
@@ -110,42 +106,6 @@ class AngelOneWebSocket {
       console.error('Failed to connect:', error);
       this.notifyStatus('error');
     }
-  }
-  
-  private startMockDataStream(): void {
-    // Generate mock real-time data
-    const baseQuotes: Record<string, MarketQuote> = {
-      'NIFTY': { symbol: 'NIFTY', token: '26000', ltp: 24850, open: 24725, high: 24892, low: 24680, close: 24725, volume: 245000000, change: 125, changePercent: 0.51, timestamp: new Date(), bid: 24849, ask: 24851, bidQty: 100, askQty: 150 },
-      'BANKNIFTY': { symbol: 'BANKNIFTY', token: '26009', ltp: 52340, open: 52521, high: 52600, low: 52200, close: 52521, volume: 89000000, change: -181, changePercent: -0.34, timestamp: new Date(), bid: 52338, ask: 52342, bidQty: 50, askQty: 75 },
-      'RELIANCE': { symbol: 'RELIANCE', token: '2885', ltp: 2945, open: 2913, high: 2958, low: 2905, close: 2913, volume: 12500000, change: 32, changePercent: 1.12, timestamp: new Date(), bid: 2944, ask: 2946, bidQty: 200, askQty: 180 },
-      'TCS': { symbol: 'TCS', token: '11536', ltp: 4125, open: 4170, high: 4180, low: 4100, close: 4170, volume: 3200000, change: -45, changePercent: -1.08, timestamp: new Date(), bid: 4124, ask: 4126, bidQty: 100, askQty: 120 },
-      'HDFCBANK': { symbol: 'HDFCBANK', token: '1333', ltp: 1685, open: 1666, high: 1692, low: 1660, close: 1666, volume: 8900000, change: 19, changePercent: 1.13, timestamp: new Date(), bid: 1684, ask: 1686, bidQty: 300, askQty: 250 },
-      'INFY': { symbol: 'INFY', token: '1594', ltp: 1892, open: 1905, high: 1910, low: 1885, close: 1905, volume: 5600000, change: -13, changePercent: -0.66, timestamp: new Date(), bid: 1891, ask: 1893, bidQty: 150, askQty: 175 },
-      'ICICIBANK': { symbol: 'ICICIBANK', token: '4963', ltp: 1245, open: 1217, high: 1252, low: 1215, close: 1217, volume: 7800000, change: 28, changePercent: 2.33, timestamp: new Date(), bid: 1244, ask: 1246, bidQty: 200, askQty: 180 },
-      'SBIN': { symbol: 'SBIN', token: '3045', ltp: 825, open: 834, high: 838, low: 820, close: 834, volume: 15200000, change: -9, changePercent: -0.99, timestamp: new Date(), bid: 824, ask: 826, bidQty: 500, askQty: 450 },
-    };
-    
-    this.mockInterval = setInterval(() => {
-      this.subscribedSymbols.forEach(symbol => {
-        const quote = baseQuotes[symbol];
-        if (quote) {
-          // Add random price movement
-          const change = (Math.random() - 0.5) * quote.ltp * 0.001;
-          quote.ltp = Math.round((quote.ltp + change) * 100) / 100;
-          quote.change = Math.round((quote.ltp - quote.close) * 100) / 100;
-          quote.changePercent = Math.round((quote.change / quote.close) * 10000) / 100;
-          quote.bid = quote.ltp - 1;
-          quote.ask = quote.ltp + 1;
-          quote.timestamp = new Date();
-          quote.volume += Math.floor(Math.random() * 10000);
-          
-          if (quote.ltp > quote.high) quote.high = quote.ltp;
-          if (quote.ltp < quote.low) quote.low = quote.ltp;
-          
-          this.notifyQuote(symbol, { ...quote });
-        }
-      });
-    }, 500); // Update every 500ms
   }
   
   private handleMessage(data: any): void {
@@ -268,11 +228,6 @@ class AngelOneWebSocket {
   }
   
   disconnect(): void {
-    if (this.mockInterval) {
-      clearInterval(this.mockInterval);
-      this.mockInterval = null;
-    }
-    
     if (this.ws) {
       this.ws.close();
       this.ws = null;
@@ -282,9 +237,6 @@ class AngelOneWebSocket {
   }
   
   isConnected(): boolean {
-    if (this.mockMode) {
-      return this.mockInterval !== null;
-    }
     return this.ws?.readyState === WebSocket.OPEN;
   }
 }
