@@ -21,6 +21,11 @@ import { SettingsPanel } from '@/components/dashboard/SettingsPanel';
 import { CommandPalette } from '@/components/dashboard/CommandPalette';
 import { HotkeyHelp } from '@/components/dashboard/HotkeyHelp';
 import { ErrorBoundary } from '@/components/dashboard/ErrorBoundary';
+import { RiskAnalytics } from '@/components/dashboard/RiskAnalytics';
+import { MonteCarloSimulation } from '@/components/dashboard/MonteCarloSimulation';
+import { AdvancedWatchlist } from '@/components/dashboard/AdvancedWatchlist';
+import { PortfolioHeatmap } from '@/components/dashboard/PortfolioHeatmap';
+import { StrategyBuilder } from '@/components/dashboard/StrategyBuilder';
 import { TradingProvider, useTrading } from '@/contexts/TradingContext';
 import { useHotkeys, defaultTradingHotkeys } from '@/hooks/useHotkeys';
 import { useTheme } from '@/components/ThemeProvider';
@@ -145,6 +150,8 @@ const DashboardContent: React.FC = () => {
 
             {activeTab === 'research' && <ResearchDashboard />}
 
+            {activeTab === 'watchlist' && <AdvancedWatchlist />}
+
             {activeTab === 'options' && (
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 <div className="xl:col-span-2">
@@ -172,13 +179,21 @@ const DashboardContent: React.FC = () => {
               </div>
             )}
 
+            {activeTab === 'heatmap' && <PortfolioHeatmap />}
+
             {activeTab === 'journal' && <TradeJournal />}
+
+            {activeTab === 'analytics' && <AnalyticsPanel />}
+
+            {activeTab === 'risk' && <RiskAnalytics />}
+
+            {activeTab === 'montecarlo' && <MonteCarloSimulation />}
+
+            {activeTab === 'strategy' && <StrategyBuilder />}
 
             {activeTab === 'backtest' && <BacktestingPanel />}
 
             {activeTab === 'ml' && <AdvancedMLPanel />}
-
-            {activeTab === 'analytics' && <AnalyticsPanel />}
 
             {activeTab === 'history' && <TradeHistory />}
 

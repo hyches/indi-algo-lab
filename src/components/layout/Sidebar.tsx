@@ -14,7 +14,12 @@ import {
   BookOpen,
   Activity,
   Globe,
-  Bell
+  Bell,
+  Shield,
+  Shuffle,
+  LayoutGrid,
+  Wand2,
+  Star
 } from 'lucide-react';
 
 interface NavItem {
@@ -29,12 +34,17 @@ const navItems: NavItem[] = [
   { icon: LineChart, label: 'Charts', id: 'charts', category: 'main' },
   { icon: Search, label: 'Scanner', id: 'scanner', category: 'main' },
   { icon: Globe, label: 'Research', id: 'research', category: 'main' },
+  { icon: Star, label: 'Watchlist', id: 'watchlist', category: 'main' },
   { icon: Layers, label: 'Options', id: 'options', category: 'trading' },
   { icon: Activity, label: 'Greeks', id: 'greeks', category: 'trading' },
   { icon: TrendingUp, label: 'Positions', id: 'positions', category: 'trading' },
+  { icon: LayoutGrid, label: 'Heatmap', id: 'heatmap', category: 'trading' },
   { icon: History, label: 'History', id: 'history', category: 'trading' },
   { icon: BookOpen, label: 'Journal', id: 'journal', category: 'trading' },
   { icon: BarChart3, label: 'Analytics', id: 'analytics', category: 'tools' },
+  { icon: Shield, label: 'Risk', id: 'risk', category: 'tools' },
+  { icon: Shuffle, label: 'Monte Carlo', id: 'montecarlo', category: 'tools' },
+  { icon: Wand2, label: 'Strategy', id: 'strategy', category: 'tools' },
   { icon: FlaskConical, label: 'Backtest', id: 'backtest', category: 'tools' },
   { icon: Brain, label: 'ML Signals', id: 'ml', category: 'tools' },
   { icon: Bell, label: 'Alerts', id: 'alerts', category: 'tools' },
