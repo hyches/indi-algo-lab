@@ -34,6 +34,7 @@ import {
   detectCandlestickPatterns,
   ADVANCED_FEATURE_NAMES,
 } from '@/lib/ml/models/advancedFeatures';
+import { OHLCV } from '@/lib/backtesting/engine';
 
 const MODEL_TYPES: { type: ModelType; icon: React.ReactNode; color: string }[] = [
   { type: 'dense_nn', icon: <Layers size={16} />, color: 'text-blue-400' },

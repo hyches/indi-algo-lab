@@ -103,28 +103,28 @@ export const BacktestingPanel: React.FC = () => {
       if (!strategyDef) {
         setIsRunning(false);
         return;
-    const strategyDef = predefinedStrategies.find(s => s.name === selectedStrategy);
-    if (!strategyDef) {
+      }
+
+      const strategyConfig: StrategyConfig = {
+        name: strategyDef.name,
+        initialCapital,
+        positionSize,
+        stopLoss,
+        takeProfit,
+        entryCondition: strategyDef.config.entryCondition!,
+        exitCondition: strategyDef.config.exitCondition,
+      };
+
+      // Small delay for UI feedback
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const backtestResult = runBacktest(data, strategyConfig);
+      setResult(backtestResult);
+    } catch (error) {
+      console.error('Backtest failed:', error);
+    } finally {
       setIsRunning(false);
-      return;
     }
-    
-    const strategyConfig: StrategyConfig = {
-      name: strategyDef.name,
-      initialCapital,
-      positionSize,
-      stopLoss,
-      takeProfit,
-      entryCondition: strategyDef.config.entryCondition!,
-      exitCondition: strategyDef.config.exitCondition,
-    };
-    
-    // Small delay for UI feedback
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const backtestResult = runBacktest(data, strategyConfig);
-    setResult(backtestResult);
-    setIsRunning(false);
   }, [selectedStrategy, symbol, days, initialCapital, positionSize, stopLoss, takeProfit]);
   
   const equityData = result?.equityCurve.map((point, i) => ({

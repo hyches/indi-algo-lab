@@ -24,6 +24,7 @@ import {
 import { tradingModel, TrainingProgress, PredictionResult } from '@/lib/ml/model';
 import { generateTrainingData, extractFeaturesFromOHLCV, featuresToArray, FEATURE_NAMES } from '@/lib/ml/featureExtractor';
 import { Progress } from '@/components/ui/progress';
+import { OHLCV } from '@/lib/backtesting/engine';
 import { useTrading } from '@/contexts/TradingContext';
 import {
   LineChart,
