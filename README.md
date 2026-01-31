@@ -2,9 +2,19 @@
 
 A comprehensive algorithmic trading platform for Indian markets with machine learning capabilities.
 
+## 🚀 Quick Start
+
+- **Status**: 🟢 Backend running on port 3001
+- **Testing**: ✅ All 5 API tests passing
+- **Documentation**: 📚 Organized in `/docs` folder
+- **Ready for**: Phase 1 implementation (Database setup)
+
+For detailed information, see [`docs/README.md`](docs/README.md)
+
 ## Features
 
 - **Real-time Market Data**: Live quotes from Yahoo Finance
+- **Multi-Vendor Architecture**: Automatic fallback chains
 - **Algorithmic Trading**: Multiple trading strategies with backtesting
 - **Machine Learning**: TensorFlow.js models for price prediction
 - **Portfolio Management**: Track positions and performance
@@ -17,6 +27,7 @@ A comprehensive algorithmic trading platform for Indian markets with machine lea
 - **Backend**: Node.js + Express + JWT Authentication
 - **ML**: TensorFlow.js for client-side predictions
 - **Data**: Yahoo Finance API for market data
+- **Architecture**: Multi-vendor router with fallback logic
 
 ## Setup
 
@@ -45,17 +56,31 @@ npm run dev
 
 The frontend will run on `http://localhost:5173`
 
+## 📚 Documentation
+
+All documentation has been organized in the `/docs` folder:
+
+- **[docs/SESSION_SUMMARY.md](docs/SESSION_SUMMARY.md)** - Complete overview of recent work
+- **[docs/COMPREHENSIVE_IMPROVEMENT_ROADMAP.md](docs/COMPREHENSIVE_IMPROVEMENT_ROADMAP.md)** - 4-phase implementation plan (5-6 weeks)
+- **[docs/QUICK_IMPROVEMENTS_REFERENCE.md](docs/QUICK_IMPROVEMENTS_REFERENCE.md)** - Code templates for all 47+ improvements
+- **[docs/TESTING_RESULTS.md](docs/TESTING_RESULTS.md)** - API test results (all 5 tests ✅)
+- **[docs/README.md](docs/README.md)** - Full documentation index and navigation
+
+See [docs/README.md](docs/README.md) for complete documentation structure.
+
 ## API Documentation
+
+### Market Data (Multi-Vendor Router)
+- `GET /api/market/quote/:symbol` - Get current quote
+- `POST /api/market/quotes` - Get multiple quotes  
+- `GET /api/market/historical/:symbol` - Get historical data
+- `GET /api/market/options/:symbol` - Get options chain
+- `GET /api/market/stats` - Get vendor health metrics
 
 ### Authentication
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - User login
 - `GET /api/auth/profile` - Get user profile
-
-### Market Data
-- `GET /api/market/historical/:symbol` - Get historical data
-- `GET /api/market/quote/:symbol` - Get current quote
-- `POST /api/market/quotes` - Get multiple quotes
 
 ### User Data
 - `GET /api/user/portfolio` - Get user portfolio

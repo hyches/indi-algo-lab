@@ -20,8 +20,8 @@ interface TradePanelProps {
 export const TradePanel: React.FC<TradePanelProps> = ({
   symbol: propSymbol,
   type: propType = 'EQ',
-  strike: propStrike = 24900,
-  expiry = '26-DEC-24',
+  strike: propStrike,
+  expiry = '',
 }) => {
   const { selectedSymbol, selectedOption, quotes, executeTrade, portfolio } = useTrading();
   
@@ -29,7 +29,7 @@ export const TradePanel: React.FC<TradePanelProps> = ({
   
   const [tradingMode, setTradingMode] = useState<'equity' | 'derivatives'>('equity');
   const [type, setType] = useState<'CE' | 'PE' | 'FUT' | 'EQ'>(tradingMode === 'equity' ? 'EQ' : propType);
-  const strike = selectedOption?.strike || propStrike;
+  const strike = selectedOption?.strike || propStrike || 0;
 
   const [action, setAction] = useState<'BUY' | 'SELL'>('BUY');
   const [qty, setQty] = useState(1);

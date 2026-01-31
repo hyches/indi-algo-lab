@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useTrading } from '@/contexts/TradingContext';
 import { cn } from '@/lib/utils';
-import { ChevronDown, AlertTriangle } from 'lucide-react';
+import { ChevronDown, AlertTriangle, Loader } from 'lucide-react';
 
 interface OptionData {
   strikePrice: number;
@@ -79,13 +79,60 @@ interface OptionChainProps {
 
 export const OptionChain: React.FC<OptionChainProps> = ({ symbol = 'NIFTY', onSelectOption }) => {
   const { quotes } = useTrading();
-  const [selectedExpiry, setSelectedExpiry] = useState('26-DEC-24');
+  const [selectedExpiry, setSelectedExpiry] = useState<string | null>(null);
+  const [optionChainData, setOptionChainData] = useState<OptionData[]>([]);
+  const [expiries, setExpiries] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   
   const quote = quotes.get(symbol);
-  const spotPrice = quote?.regularMarketPrice || 24850.50;
-  
-  const optionChainData: OptionData[] = useMemo(() => [], []); // Mock data removed
-  const expiries = ['26-DEC-24', '02-JAN-25', '09-JAN-25', '30-JAN-25'];
+  const spotPrice = quote?.regularMarketPrice || 0;
+
+  // Fetch options chain data
+  useEffect(() => {
+    const fetchOptions = async () => {
+      if (!symbol) return;
+      setLoading(true);
+      try {
+        // First fetch to get available expiries
+        const response = await fetch(`${process.env.NODE_ENV === 'production' ? 'https://your-backend-url.com/api' : 'http://localhost:3001/api'}/market/options/${symbol}`);
+        const data = await response.json();
+        
+        if (data.expiryDates && data.expiryDates.length > 0) {
+          setExpiries(data.expiryDates);
+          setSelectedExpiry(data.expiryDates[0]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch options expiries:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOptions();
+  }, [symbol]);
+
+  // Fetch options chain for selected expiry
+  useEffect(() => {
+    const fetchChain = async () => {
+      if (!symbol || !selectedExpiry) return;
+      setLoading(true);
+      try {
+        const response = await fetch(`${process.env.NODE_ENV === 'production' ? 'https://your-backend-url.com/api' : 'http://localhost:3001/api'}/market/options/${symbol}?expiry=${selectedExpiry}`);
+        const data = await response.json();
+        
+        if (data.optionChain && Array.isArray(data.optionChain)) {
+          setOptionChainData(data.optionChain);
+        } else {
+          setOptionChainData([]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch option chain:', error);
+        setOptionChainData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchChain();
+  }, [symbol, selectedExpiry]);
 
   return (
     <div className="space-y-4">
@@ -97,9 +144,18 @@ export const OptionChain: React.FC<OptionChainProps> = ({ symbol = 'NIFTY', onSe
           </p>
         </div>
         <div className="relative">
-          <select value={selectedExpiry} onChange={(e) => setSelectedExpiry(e.target.value)} className="glass-button appearance-none pr-8 cursor-pointer text-sm">
-            {expiries.map(exp => (<option key={exp} value={exp} className="bg-card">{exp}</option>))}
-          </select>
+          {expiries.length > 0 ? (
+            <select 
+              value={selectedExpiry || ''} 
+              onChange={(e) => setSelectedExpiry(e.target.value)} 
+              className="glass-button appearance-none pr-8 cursor-pointer text-sm"
+              disabled={loading}
+            >
+              {expiries.map(exp => (<option key={exp} value={exp} className="bg-card">{exp}</option>))}
+            </select>
+          ) : (
+            <div className="glass-button text-sm text-muted-foreground">No expiries available</div>
+          )}
           <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
         </div>
       </div>
@@ -109,18 +165,29 @@ export const OptionChain: React.FC<OptionChainProps> = ({ symbol = 'NIFTY', onSe
           <div className="text-center">STRIKE</div><div className="text-rose-400">PUT</div><div>IV</div><div>Chng</div><div>OI</div>
         </div>
         <div className="max-h-[400px] overflow-y-auto">
-          {optionChainData.length > 0 ? (
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader className="h-8 w-8 animate-spin text-muted-foreground mb-4" />
+              <p className="text-sm text-muted-foreground">Loading option chain...</p>
+            </div>
+          ) : optionChainData.length > 0 ? (
             optionChainData.map((row) => (
-              <OptionRow key={row.strikePrice} data={row} spotPrice={spotPrice}
+              <OptionRow 
+                key={row.strikePrice} 
+                data={row} 
+                spotPrice={spotPrice}
                 onSelectCall={() => onSelectOption?.('CE', row.strikePrice)}
-                onSelectPut={() => onSelectOption?.('PE', row.strikePrice)} />
+                onSelectPut={() => onSelectOption?.('PE', row.strikePrice)} 
+              />
             ))
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <AlertTriangle className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Option Data Available</h3>
               <p className="text-sm text-muted-foreground max-w-md">
-                Mock data has been removed. Connect to a real options data provider to display live option chains.
+                {expiries.length === 0 
+                  ? "Options data is not available for this symbol. Please select a symbol that has options trading."
+                  : "Unable to fetch real-time option chain data. Please try again."}
               </p>
             </div>
           )}

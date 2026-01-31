@@ -21,40 +21,7 @@ interface HeatmapData {
   children?: HeatmapData[];
 }
 
-const MOCK_PORTFOLIO_DATA: HeatmapData[] = [
-  { name: 'IT', size: 0, value: 0, change: 0, color: '', sector: 'IT', children: [
-    { name: 'TCS', size: 450000, value: 450000, change: 2.3, color: '', sector: 'IT' },
-    { name: 'INFY', size: 320000, value: 320000, change: 1.8, color: '', sector: 'IT' },
-    { name: 'WIPRO', size: 180000, value: 180000, change: -0.5, color: '', sector: 'IT' },
-    { name: 'HCLTECH', size: 150000, value: 150000, change: 3.1, color: '', sector: 'IT' },
-  ]},
-  { name: 'Banking', size: 0, value: 0, change: 0, color: '', sector: 'Banking', children: [
-    { name: 'HDFCBANK', size: 380000, value: 380000, change: -1.2, color: '', sector: 'Banking' },
-    { name: 'ICICIBANK', size: 290000, value: 290000, change: 0.8, color: '', sector: 'Banking' },
-    { name: 'SBIN', size: 220000, value: 220000, change: -0.3, color: '', sector: 'Banking' },
-    { name: 'KOTAKBANK', size: 180000, value: 180000, change: 1.5, color: '', sector: 'Banking' },
-  ]},
-  { name: 'Energy', size: 0, value: 0, change: 0, color: '', sector: 'Energy', children: [
-    { name: 'RELIANCE', size: 520000, value: 520000, change: 1.5, color: '', sector: 'Energy' },
-    { name: 'ONGC', size: 150000, value: 150000, change: -2.1, color: '', sector: 'Energy' },
-    { name: 'BPCL', size: 120000, value: 120000, change: 0.9, color: '', sector: 'Energy' },
-  ]},
-  { name: 'FMCG', size: 0, value: 0, change: 0, color: '', sector: 'FMCG', children: [
-    { name: 'ITC', size: 280000, value: 280000, change: 0.5, color: '', sector: 'FMCG' },
-    { name: 'HINDUNILVR', size: 240000, value: 240000, change: -0.8, color: '', sector: 'FMCG' },
-    { name: 'NESTLEIND', size: 160000, value: 160000, change: 1.2, color: '', sector: 'FMCG' },
-  ]},
-  { name: 'Pharma', size: 0, value: 0, change: 0, color: '', sector: 'Pharma', children: [
-    { name: 'SUNPHARMA', size: 190000, value: 190000, change: 2.8, color: '', sector: 'Pharma' },
-    { name: 'DRREDDY', size: 140000, value: 140000, change: 1.9, color: '', sector: 'Pharma' },
-    { name: 'CIPLA', size: 110000, value: 110000, change: -0.4, color: '', sector: 'Pharma' },
-  ]},
-  { name: 'Auto', size: 0, value: 0, change: 0, color: '', sector: 'Auto', children: [
-    { name: 'MARUTI', size: 220000, value: 220000, change: -1.8, color: '', sector: 'Auto' },
-    { name: 'TATAMOTORS', size: 180000, value: 180000, change: 2.1, color: '', sector: 'Auto' },
-    { name: 'M&M', size: 140000, value: 140000, change: 0.6, color: '', sector: 'Auto' },
-  ]},
-];
+const MOCK_PORTFOLIO_DATA: HeatmapData[] = [];
 
 const getColorByChange = (change: number): string => {
   if (change >= 3) return 'hsl(152, 70%, 35%)';
@@ -149,13 +116,48 @@ type ViewMode = 'flat' | 'sector';
 type SizeMode = 'value' | 'equal';
 
 export const PortfolioHeatmap: React.FC = () => {
+  const { positions, quotes } = useTrading();
   const [viewMode, setViewMode] = useState<ViewMode>('flat');
   const [sizeMode, setSizeMode] = useState<SizeMode>('value');
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
   
+  // Generate real data from positions
+  const portfolioData = useMemo(() => {
+    const sectors: { [key: string]: HeatmapData[] } = {};
+    
+    positions.forEach(position => {
+      const value = Math.abs(position.qty * position.ltp);
+      const change = position.pnlPercent || 0;
+      
+      const sector = 'Holdings';
+      if (!sectors[sector]) {
+        sectors[sector] = [];
+      }
+      
+      sectors[sector].push({
+        name: position.symbol,
+        size: value,
+        value: value,
+        change: change,
+        color: getColorByChange(change),
+        sector: sector
+      });
+    });
+
+    return Object.entries(sectors).map(([sectorName, items]) => ({
+      name: sectorName,
+      size: 0,
+      value: 0,
+      change: 0,
+      color: '',
+      sector: sectorName,
+      children: items
+    }));
+  }, [positions]);
+  
   const flatData = useMemo(() => {
     const allItems: HeatmapData[] = [];
-    MOCK_PORTFOLIO_DATA.forEach(sector => {
+    portfolioData.forEach(sector => {
       sector.children?.forEach(item => {
         allItems.push({
           ...item,
@@ -166,20 +168,20 @@ export const PortfolioHeatmap: React.FC = () => {
     return allItems
       .filter(item => !selectedSector || item.sector === selectedSector)
       .sort((a, b) => b.value - a.value);
-  }, [selectedSector, sizeMode]);
+  }, [selectedSector, sizeMode, portfolioData]);
 
   const sectorData = useMemo(() => {
-    return MOCK_PORTFOLIO_DATA.map(sector => ({
+    return portfolioData.map(sector => ({
       ...sector,
       size: sector.children?.reduce((sum, child) => sum + (sizeMode === 'equal' ? 100 : child.value), 0) || 0,
       change: (sector.children?.reduce((sum, child) => sum + child.change, 0) || 0) / (sector.children?.length || 1),
     })).filter(sector => !selectedSector || sector.name === selectedSector);
-  }, [selectedSector, sizeMode]);
+  }, [selectedSector, sizeMode, portfolioData]);
 
-  const sectors = [...new Set(MOCK_PORTFOLIO_DATA.map(s => s.name))];
+  const sectors = [...new Set(portfolioData.map(s => s.name))];
 
   const totalValue = flatData.reduce((sum, item) => sum + item.value, 0);
-  const totalChange = flatData.reduce((sum, item) => sum + item.change * item.value, 0) / totalValue;
+  const totalChange = totalValue > 0 ? flatData.reduce((sum, item) => sum + item.change * item.value, 0) / totalValue : 0;
   const gainers = flatData.filter(item => item.change > 0).length;
   const losers = flatData.filter(item => item.change < 0).length;
 
@@ -193,7 +195,7 @@ export const PortfolioHeatmap: React.FC = () => {
           </div>
           <div>
             <h2 className="section-title">Portfolio Heatmap</h2>
-            <p className="text-sm text-muted-foreground">Visual breakdown by value</p>
+            <p className="text-sm text-muted-foreground">Visual breakdown of your holdings</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
