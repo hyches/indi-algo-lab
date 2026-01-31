@@ -3,6 +3,18 @@ import { useTrading } from '@/contexts/TradingContext';
 import { cn } from '@/lib/utils';
 import { ChevronDown, AlertTriangle } from 'lucide-react';
 
+interface OptionData {
+  strikePrice: number;
+  callLTP: number;
+  callOI: number;
+  callOIChange: number;
+  callIV: number;
+  putLTP: number;
+  putOI: number;
+  putOIChange: number;
+  putIV: number;
+}
+
 const formatNumber = (value: number, decimals: number = 2) => {
   if (value >= 100000) {
     return `${(value / 100000).toFixed(2)}L`;
