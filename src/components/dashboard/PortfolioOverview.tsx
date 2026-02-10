@@ -37,15 +37,9 @@ export const PortfolioOverview: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">Portfolio Overview</h2>
-          <p className="text-sm text-muted-foreground">Paper Trading Account</p>
-        </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 pulse-live" />
-          <span className="text-xs text-emerald-400 font-medium">Market Open</span>
-        </div>
+      <div>
+        <h2 className="text-xl font-semibold">Portfolio Overview</h2>
+        <p className="text-sm text-muted-foreground">Paper Trading Account</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard title="Total P&L" value={formatCurrency(portfolio.totalPnL)} subValue={formatPercent(pnlPercent)} icon={portfolio.totalPnL >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />} trend={portfolio.totalPnL >= 0 ? 'up' : 'down'} />
