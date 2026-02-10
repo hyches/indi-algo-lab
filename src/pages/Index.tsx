@@ -116,17 +116,8 @@ const DashboardContent: React.FC = () => {
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                   <div className="xl:col-span-2 space-y-6">
                     <Watchlist />
-                    <OptionChain 
-                      symbol={selectedSymbol}
-                      onSelectOption={handleSelectOption}
-                    />
                   </div>
                   <div className="space-y-6">
-                    <TradePanel 
-                      symbol={selectedSymbol}
-                      type={selectedOption?.type || 'CE'}
-                      strike={selectedOption?.strike || 24900}
-                    />
                     <MLSignals />
                   </div>
                 </div>
