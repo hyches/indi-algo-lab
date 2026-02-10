@@ -10,7 +10,7 @@ interface TradingViewChartProps {
 
 // TradingView Widget Component
 export const TradingViewChart: React.FC<TradingViewChartProps> = memo(({
-  symbol = 'NSE:NIFTY',
+  symbol = 'NSE:NIFTY50',
   interval = 'D',
   theme: propTheme,
   height = 500,
