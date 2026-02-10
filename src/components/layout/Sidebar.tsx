@@ -65,15 +65,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
       key={item.id}
       onClick={() => onTabChange(item.id)}
       className={cn(
-        'w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 group relative',
+        'w-full py-1.5 rounded-xl flex flex-col items-center justify-center gap-0.5 transition-all duration-200',
         activeTab === item.id
           ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
           : 'text-muted-foreground hover:text-foreground hover:bg-accent'
       )}
     >
-      <item.icon size={20} />
-      
-      <span className="absolute left-full ml-3 px-3 py-1.5 rounded-lg bg-popover text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-border shadow-lg">
+      <item.icon size={18} />
+      <span className="text-[9px] font-medium leading-tight truncate w-full text-center">
         {item.label}
       </span>
     </button>
@@ -108,16 +107,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
       <button 
         onClick={() => onTabChange('settings')}
         className={cn(
-          "w-12 h-12 rounded-xl flex items-center justify-center transition-all group relative",
+          "w-full py-1.5 rounded-xl flex flex-col items-center justify-center gap-0.5 transition-all",
           activeTab === 'settings'
             ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
             : "text-muted-foreground hover:text-foreground hover:bg-accent"
         )}
       >
-        <Settings size={20} />
-        <span className="absolute left-full ml-3 px-3 py-1.5 rounded-lg bg-popover text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-border shadow-lg">
-          Settings
-        </span>
+        <Settings size={18} />
+        <span className="text-[9px] font-medium leading-tight">Settings</span>
       </button>
     </aside>
   );
