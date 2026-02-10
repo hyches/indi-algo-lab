@@ -159,14 +159,14 @@ const NewsCard: React.FC<{ news: NewsItem }> = ({ news }) => (
   </a>
 );
 
-const SectorHeatmapCell: React.FC<{ data: typeof HEATMAP_DATA[0]; x: number; y: number; width: number; height: number }> = ({ 
-  data, x, y, width, height 
-}) => {
-  if (!data || data.change === undefined || width < 40 || height < 30) return null;
+const SectorHeatmapCell: React.FC<any> = (props) => {
+  const { x, y, width, height, name, change } = props;
 
-  const bgColor = data.change >= 0 
-    ? `hsl(152, 70%, ${40 + Math.min(data.change * 5, 20)}%)`
-    : `hsl(0, 72%, ${45 + Math.min(Math.abs(data.change) * 5, 20)}%)`;
+  if (width < 40 || height < 30) return null;
+
+  const bgColor = change >= 0 
+    ? `hsl(152, 70%, ${40 + Math.min(change * 5, 20)}%)`
+    : `hsl(0, 72%, ${45 + Math.min(Math.abs(change) * 5, 20)}%)`;
 
   return (
     <g>
@@ -188,7 +188,7 @@ const SectorHeatmapCell: React.FC<{ data: typeof HEATMAP_DATA[0]; x: number; y: 
         fontWeight="600"
         fontFamily="JetBrains Mono"
       >
-        {data.name}
+        {name}
       </text>
       <text
         x={x + width / 2}
@@ -199,7 +199,7 @@ const SectorHeatmapCell: React.FC<{ data: typeof HEATMAP_DATA[0]; x: number; y: 
         fontFamily="JetBrains Mono"
         opacity={0.9}
       >
-        {data.change >= 0 ? '+' : ''}{data.change.toFixed(1)}%
+        {change >= 0 ? '+' : ''}{change.toFixed(1)}%
       </text>
     </g>
   );
@@ -433,7 +433,7 @@ export const ResearchDashboard: React.FC = () => {
                 dataKey="size"
                 aspectRatio={4/3}
                 stroke="hsl(var(--background))"
-                content={<SectorHeatmapCell data={{} as any} x={0} y={0} width={0} height={0} />}
+                content={<SectorHeatmapCell />}
               />
             </ResponsiveContainer>
           </div>
