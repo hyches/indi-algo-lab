@@ -162,11 +162,11 @@ const NewsCard: React.FC<{ news: NewsItem }> = ({ news }) => (
 const SectorHeatmapCell: React.FC<{ data: typeof HEATMAP_DATA[0]; x: number; y: number; width: number; height: number }> = ({ 
   data, x, y, width, height 
 }) => {
+  if (!data || data.change === undefined || width < 40 || height < 30) return null;
+
   const bgColor = data.change >= 0 
     ? `hsl(152, 70%, ${40 + Math.min(data.change * 5, 20)}%)`
     : `hsl(0, 72%, ${45 + Math.min(Math.abs(data.change) * 5, 20)}%)`;
-
-  if (width < 40 || height < 30) return null;
 
   return (
     <g>
