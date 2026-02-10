@@ -160,9 +160,9 @@ const NewsCard: React.FC<{ news: NewsItem }> = ({ news }) => (
 );
 
 const SectorHeatmapCell: React.FC<any> = (props) => {
-  const { x, y, width, height, name, change } = props;
+  const { x, y, width, height, name, change, depth } = props;
 
-  if (width < 40 || height < 30) return null;
+  if (depth !== 1 || width < 40 || height < 30) return null;
 
   const bgColor = change >= 0 
     ? `hsl(152, 70%, ${40 + Math.min(change * 5, 20)}%)`
